@@ -16,10 +16,14 @@ public class StudentService {
 
     // ================= ADD STUDENT =================
 
-    public void addStudent(Student student) {
+    public void addStudent(Student student){
+
+        if(students.contains(student)){
+            System.out.println("Student already exists!");
+            return;
+        }
 
         students.add(student);
-
         saveStudentsToFile();
 
         System.out.println("Student Added Successfully.");
@@ -87,7 +91,7 @@ public class StudentService {
         student.setSemester(semester);
         student.setEmail(email);
         student.setPhone(phone);
-        student.setCgpa((int) cgpa);
+        student.setCgpa(cgpa);
 
         saveStudentsToFile();
 

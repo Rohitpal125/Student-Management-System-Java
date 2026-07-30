@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class Student {
     private int id;
     private String name;
@@ -88,7 +90,7 @@ public class Student {
         return phone;
     }
 
-    public void setCgpa(int cgpa){
+    public void setCgpa(double cgpa){
 
         this.cgpa = cgpa;
     }
@@ -98,13 +100,28 @@ public class Student {
         return cgpa;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+        if(this==o)
+            return true;
+        Student student = (Student) o;
+        return id == student.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
     public String toString(){
         return "ID: " + id +
                 "\nName: " + name +
                 "\nAge: " + age +
                 "\n Course: " + course +
                 "\nSemester: " + semester +
-                "\nEmail " + email +
+                "\nEmail: " + email +
                 "\nPhoneNo: " + phone +
                 "\nCGPA: " + cgpa;
     }
