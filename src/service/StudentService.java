@@ -1,7 +1,7 @@
 package service;
 
 import model.Student;
-
+import util.StudentValidator;
 import database.FileManager;
 import java.io.*;
 import java.util.ArrayList;
@@ -20,6 +20,36 @@ public class StudentService {
     // ================= ADD STUDENT =================
 
     public void addStudent(Student student){
+
+        if (!StudentValidator.isValidName(student.getName())) {
+            System.out.println("Invalid Name!");
+            return;
+        }
+
+        if (!StudentValidator.isValidAge(student.getAge())) {
+            System.out.println("Invalid Age!");
+            return;
+        }
+
+        if (!StudentValidator.isValidEmail(student.getEmail())) {
+            System.out.println("Invalid Email!");
+            return;
+        }
+
+        if (!StudentValidator.isValidPhone(student.getPhone())) {
+            System.out.println("Invalid Phone Number!");
+            return;
+        }
+
+        if (!StudentValidator.isValidSemester(student.getSemester())) {
+            System.out.println("Invalid Semester!");
+            return;
+        }
+
+        if (!StudentValidator.isValidCgpa((int) student.getCgpa())) {
+            System.out.println("Invalid CGPA!");
+            return;
+        }
 
         if(students.contains(student)){
             System.out.println("Student already exists!");
@@ -81,6 +111,30 @@ public class StudentService {
                                  double cgpa) {
 
         Student student = searchStudentById(id);
+
+        if (!StudentValidator.isValidName(name)) {
+            return false;
+        }
+
+        if (!StudentValidator.isValidAge(age)) {
+            return false;
+        }
+
+        if (!StudentValidator.isValidEmail(email)) {
+            return false;
+        }
+
+        if (!StudentValidator.isValidPhone(phone)) {
+            return false;
+        }
+
+        if (!StudentValidator.isValidSemester(semester)) {
+            return false;
+        }
+
+        if (!StudentValidator.isValidCgpa((int) cgpa)) {
+            return false;
+        }
 
         if (student == null) {
 
