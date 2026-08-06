@@ -2,16 +2,19 @@ package service;
 
 import model.Student;
 
+import database.FileManager;
 import java.io.*;
 import java.util.ArrayList;
+
 
 public class StudentService {
 
     private final ArrayList<Student> students = new ArrayList<>();
+    private final FileManager fileManager = new FileManager();
 
     // Constructor
     public StudentService() {
-        loadStudentsFromFile();
+        students.addAll(fileManager.loadStudents());
     }
 
     // ================= ADD STUDENT =================
@@ -24,7 +27,7 @@ public class StudentService {
         }
 
         students.add(student);
-        saveStudentsToFile();
+        fileManager.saveStudents(students);
 
         System.out.println("Student Added Successfully.");
     }
@@ -93,7 +96,7 @@ public class StudentService {
         student.setPhone(phone);
         student.setCgpa(cgpa);
 
-        saveStudentsToFile();
+        fileManager.saveStudents(students);
 
         return true;
 
@@ -113,94 +116,9 @@ public class StudentService {
 
         students.remove(student);
 
-        saveStudentsToFile();
+        fileManager.saveStudents(students);
 
         return true;
-
-    }
-
-    // ================= SAVE STUDENTS =================
-
-    private void saveStudentsToFile() {
-
-        try {
-
-            BufferedWriter bw =
-                    new BufferedWriter(
-                            new FileWriter("students.txt"));
-
-            for (Student student : students) {
-
-                String line =
-                        student.getId() + "," +
-                                student.getName() + "," +
-                                student.getAge() + "," +
-                                student.getCourse() + "," +
-                                student.getSemester() + "," +
-                                student.getEmail() + "," +
-                                student.getPhone() + "," +
-                                student.getCgpa();
-
-                bw.write(line);
-                bw.newLine();
-
-            }
-
-            bw.close();
-
-        } catch (Exception e) {
-
-            System.out.println("Error Saving File.");
-
-        }
-
-    }
-
-    // ================= LOAD STUDENTS =================
-
-    private void loadStudentsFromFile() {
-
-        try {
-
-            BufferedReader br =
-                    new BufferedReader(
-                            new FileReader("students.txt"));
-
-            String line;
-
-            while ((line = br.readLine()) != null) {
-
-                String[] data = line.split(",");
-
-                Student student = new Student(
-
-                        Integer.parseInt(data[0]),
-                        data[1],
-                        Integer.parseInt(data[2]),
-                        data[3],
-                        Integer.parseInt(data[4]),
-                        data[5],
-                        data[6],
-                        Double.parseDouble(data[7])
-
-                );
-
-                students.add(student);
-
-            }
-
-            br.close();
-
-        } catch (FileNotFoundException e) {
-
-            System.out.println("students.txt not found.");
-            System.out.println("New file will be created automatically.");
-
-        } catch (Exception e) {
-
-            System.out.println("Error Loading File.");
-
-        }
 
     }
 
