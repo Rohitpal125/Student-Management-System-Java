@@ -5,6 +5,7 @@ import util.StudentValidator;
 import database.FileManager;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -110,6 +111,55 @@ public class StudentService {
 
                 System.out.println("Semister " + entry.getKey() + " : " + entry.getValue());
             }
+    }
+
+//    ==================SORT STUDENTS BY NAME=======================
+
+    public void sortByName(){
+        if(students.isEmpty()){
+            System.out.println("No Student Found");
+            return;
+        }
+        Collections.sort(students, (s1, s2) -> s1.getName().compareTo(s2.getName()) );
+
+        displayStudents();
+    }
+
+//    =================SORT BY CGPA==================
+
+    public void sortByCgpa(){
+
+        if(students.isEmpty()){
+            System.out.println("Not found");
+            return;
+        }
+        Collections.sort(students, (s1, s2) -> Double.compare(s2.getCgpa(), s1.getCgpa()));
+
+        displayStudents();
+    }
+
+//    ==================SORT BY AGE==============
+
+    public void sortByAge(){
+        if(students.isEmpty()){
+            System.out.println("Not Found");
+            return;
+        }
+        Collections.sort(students, (s1, s2)-> Integer.compare(s2.getAge(), s1.getAge()));
+
+        displayStudents();
+    }
+
+//    ==============SORT BY SEMESTER=============
+
+    public void sortBySemester(){
+
+        if(students.isEmpty()){
+            System.out.println("Student not found");
+            return;
+        }
+        Collections.sort(students, (s2,s1)-> Integer.compare(s2.getSemester(), s1.getSemester()));
+        displayStudents();
     }
 
     // Constructor
