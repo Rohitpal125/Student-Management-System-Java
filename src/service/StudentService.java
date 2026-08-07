@@ -5,6 +5,8 @@ import util.StudentValidator;
 import database.FileManager;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class StudentService {
@@ -12,8 +14,107 @@ public class StudentService {
     private final ArrayList<Student> students = new ArrayList<>();
     private final FileManager fileManager = new FileManager();
 
+//    =============GET TOTAL STUDENTS==============
+
+    public int getTotalStudents() {
+        return students.size();
+    }
+
+//    ==============Average CGPA===================
+
+    public double getAvrCgpa(){
+        double totalcgpa = 0;
+        if(students.isEmpty()){
+            System.out.println("No Student found");
+            return 0;
+        }
+        else {
+
+            for(Student student : students){
+                totalcgpa = totalcgpa + student.getCgpa();
+            }
+        }
+        return totalcgpa/students.size();
+    }
+
+//    =============HIGHEST CGPA==================
+
+    public Student getHighestCgpa(){
+
+        if(students.isEmpty()){
+            return null;
+        }
+        Student highstudent = students.get(0);
+        for (Student student : students){
+
+            if(student.getCgpa() > highstudent.getCgpa()){
+                    highstudent = student;
+                }
+        }
+        return highstudent;
+    }
+
+//    ==================LOWESTcGPA==================
+
+    public Student getLowestCgpa(){
+
+        if(students.isEmpty()){
+            return null;
+        }
+        Student lowstudent = students.get(0);
+        for (Student student : students){
+            if (student.getCgpa() < lowstudent.getCgpa()){
+                lowstudent = student;
+            }
+        }
+        return lowstudent;
+    }
+
+//    ===================STUDENTPECOURSE================
+
+    public void studentsPerCourse(){
+        HashMap<String,Integer> map = new HashMap<>();
+        if(students.isEmpty()){
+            System.out.println("Student not found");
+            return;
+        }
+        else {
+            for (Student student : students){
+                String course = student.getCourse();
+
+                map.put(course, map.getOrDefault(course,0) + 1);
+            }
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                System.out.println(entry.getKey() + " : " + entry.getValue());
+            }
+        }
+    }
+
+//    ===================STUDENTS PA semester===============
+
+
+    public void studentpaSemester(){
+        HashMap<Integer, Integer> map = new HashMap<>();
+
+        if(students.isEmpty()){
+            System.out.println("Not Found Student");
+            return;
+        }
+            for(Student student : students){
+                int semester = student.getSemester();
+
+                map.put(semester, map.getOrDefault(semester, 0) + 1);
+
+            }
+            for(Map.Entry<Integer, Integer> entry : map.entrySet()) {
+
+                System.out.println("Semister " + entry.getKey() + " : " + entry.getValue());
+            }
+    }
+
     // Constructor
     public StudentService() {
+
         students.addAll(fileManager.loadStudents());
     }
 
@@ -81,7 +182,7 @@ public class StudentService {
 
     }
 
-    // ================= SEARCH STUDENT =================
+    // ================= SEARCH STUDENT BY ID =================
 
     public Student searchStudentById(int id) {
 
@@ -98,6 +199,39 @@ public class StudentService {
         return null;
 
     }
+
+//    ==================SEARCH STUDENT BY NAME======================
+
+public ArrayList<Student> searchStudentByName(String name){
+
+    ArrayList<Student> result = new ArrayList<>();
+
+    for(Student student : students){
+
+        if(student.getName().equalsIgnoreCase(name)){
+            result.add(student);
+        }
+    }
+
+    return result;
+}
+
+//=====================SEARCH BY COURSE=======================
+
+public ArrayList<Student> searchStudentByCourse(String course){
+
+    ArrayList<Student> result = new ArrayList<>();
+
+    for(Student student : students){
+
+        if(student.getCourse().equalsIgnoreCase(course)){
+            result.add(student);
+        }
+    }
+
+    return result;
+}
+
 
     // ================= UPDATE STUDENT =================
 

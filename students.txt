@@ -1,1 +1,2 @@
 54,Lavi,12,nursery,5,lavi@gmail.com,5689423657,9.3
+35,mahi,25,btech,3,mahi@gmail.com,5365879654,8.0
