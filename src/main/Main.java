@@ -23,7 +23,8 @@ public class Main {
             System.out.println("4. Update Student");
             System.out.println("5. Delete Student");
             System.out.println("6. Statistics");
-            System.out.println("7. Exit");
+            System.out.println("7. Sort Students");
+            System.out.println("8. Exit");
             System.out.print("Enter your choice : ");
 
             try {
@@ -294,15 +295,69 @@ public class Main {
                                     System.out.println("Students Semester");
 
                                     service.studentpaSemester();
-                            }       break;
+                                    break;
 
+                                case 7:
+                                    staticsmenu = false;
+                                    break;
+
+                                default:
+                                    System.out.println("Invalid choice");
+                            }
 
                         }
 
 
-
-
                     case 7:
+                        boolean sortstudent = true;
+
+                        while (sortstudent){
+
+                            System.out.println("========== Sort Students ==========");
+
+                            System.out.println("1.Sort by name");
+                            System.out.println("2.Sort by CGPA");
+                            System.out.println("3.Sort by Age");
+                            System.out.println("4.Sort by Semester");
+                            System.out.println("5.Back");
+                            System.out.print("Enter your choice: ");
+
+                            int chice3 = sc.nextInt();
+                            sc.nextLine();
+
+                            switch (chice3){
+
+                                case 1:
+                                    service.sortByName();
+
+                                    break;
+
+                                case 2:
+                                    service.sortByCgpa();
+
+                                    break;
+
+                                case 3:
+                                    service.sortByAge();
+
+                                    break;
+
+                                case 4:
+                                    service.displayStudents();
+
+                                    break;
+
+                                case 5:
+                                    sortstudent = false;
+                                    break;
+
+                                default:
+                                    System.out.println("Invalid choice");
+                            }
+
+                        }
+
+                    case 8:
 
                         System.out.println("Thank You!");
                         System.exit(0);
