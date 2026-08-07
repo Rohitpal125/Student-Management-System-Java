@@ -116,10 +116,10 @@ public class Student {
     }
 
     public String toString(){
-        return "ID: " + id +
+        return "\nID: " + id +
                 "\nName: " + name +
                 "\nAge: " + age +
-                "\n Course: " + course +
+                "\nCourse: " + course +
                 "\nSemester: " + semester +
                 "\nEmail: " + email +
                 "\nPhoneNo: " + phone +
