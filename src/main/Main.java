@@ -24,7 +24,8 @@ public class Main {
             System.out.println("5. Delete Student");
             System.out.println("6. Statistics");
             System.out.println("7. Sort Students");
-            System.out.println("8. Exit");
+            System.out.println("8. Filter Students");
+            System.out.println("9. Exit");
             System.out.print("Enter your choice : ");
 
             try {
@@ -358,6 +359,50 @@ public class Main {
                         }
 
                     case 8:
+
+                        boolean filterstudent = true;
+
+                        while (filterstudent){
+                            System.out.println("========== Filter Students ==========");
+
+                            System.out.println("1.Filter by CGPA");
+                            System.out.println("2.Filter by AGE");
+                            System.out.println("3.Filter by SEMESTER");
+                            System.out.println("4.Filter by COURSE");
+                            System.out.println("5.Back");
+                            System.out.print("Enter your choice: ");
+
+                            int choice4 = sc.nextInt();
+                            sc.nextLine();
+
+                            switch (choice4){
+
+                                case 1:
+                                    service.filterByCgpa();
+                                    break;
+
+                                case 2:
+                                    service.filterByAge();
+                                    break;
+
+                                case 3:
+                                    service.filterBySemester();
+                                    break;
+
+                                case 4:
+                                    service.filterByCourse();
+                                    break;
+
+                                case 5:
+                                    filterstudent = false;
+                                    break;
+
+                                default:
+                                    System.out.println("Invalide choice");
+                            }
+                        }
+
+                    case 9:
 
                         System.out.println("Thank You!");
                         System.exit(0);

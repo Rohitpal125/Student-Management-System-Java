@@ -1,5 +1,6 @@
 package service;
 
+import java.util.Scanner;
 import model.Student;
 import util.StudentValidator;
 import database.FileManager;
@@ -14,6 +15,8 @@ public class StudentService {
 
     private final ArrayList<Student> students = new ArrayList<>();
     private final FileManager fileManager = new FileManager();
+
+    Scanner sc = new Scanner(System.in);
 
 //    =============GET TOTAL STUDENTS==============
 
@@ -162,6 +165,117 @@ public class StudentService {
         displayStudents();
     }
 
+//    ================FILTER BY CGPA================
+
+    public void filterByCgpa(){
+        if(students.isEmpty()){
+            System.out.println("Not Student Found");
+            return;
+        }
+        System.out.print("Enter Minimum sgpa: ");
+        double MinimumCgpa = sc.nextDouble();
+        sc.nextLine();
+
+        ArrayList<Student> filterStudents = new ArrayList<>();
+
+        for (Student student : students){
+            if(student.getCgpa() >= MinimumCgpa){
+                filterStudents.add(student);
+            }
+        }
+        if(filterStudents.isEmpty()){
+            System.out.println("No Found Student");
+            return;
+        }
+        else {
+            displayStudents(filterStudents);
+        }
+
+    }
+
+//    =================FILTER BY AGE===================
+
+    public void filterByAge(){
+        if(students.isEmpty()){
+            System.out.println("Not Student Found");
+        }
+        System.out.print("Enter Minimum Age: ");
+        int MinimumAge = sc.nextInt();
+        sc.nextLine();
+
+        ArrayList<Student> filterStudent = new ArrayList<>();
+
+        for (Student student : students){
+            if(student.getAge() >= MinimumAge){
+                filterStudent.add(student);
+            }
+        }
+        if (filterStudent.isEmpty()){
+            System.out.println("Not Found Student");
+            return;
+        }
+        else {
+            displayStudents(filterStudent);
+        }
+    }
+
+//    ================FILTER BY SEMESTER=============
+
+    public void filterBySemester(){
+        if(students.isEmpty()){
+            System.out.println("Not Student Found");
+            return;
+        }
+        else {
+            System.out.print("Enter Minimum Semester: ");
+            int minSemester = sc.nextInt();
+            sc.nextLine();
+
+            ArrayList<Student> filterStudent = new ArrayList<>();
+
+            for (Student student : students){
+                if(student.getSemester() >= minSemester){
+                    filterStudent.add(student);
+                }
+            }
+            if(filterStudent.isEmpty()){
+                System.out.println("Not found Student");
+                return;
+            }
+            else {
+                displayStudents(filterStudent);
+            }
+        }
+    }
+
+//    ===============FILTER BY COURSE=========
+
+    public void filterByCourse(){
+        if(students.isEmpty()){
+            System.out.println("Not student found");
+            return;
+        }
+        else {
+            System.out.print("Enter Course: ");
+            String course = sc.nextLine();
+
+            ArrayList<Student> filterStudent = new ArrayList<>();
+
+            for (Student student : students){
+                if(student.getCourse().equalsIgnoreCase(course)){
+                    filterStudent.add(student);
+                }
+            }
+            if(filterStudent.isEmpty()){
+                System.out.println("Not Student Found");
+                return;
+            }
+            else {
+                displayStudents(filterStudent);
+            }
+        }
+    }
+
     // Constructor
     public StudentService() {
 
@@ -228,6 +342,20 @@ public class StudentService {
 
             System.out.println(student);
 
+        }
+
+    }
+//    ===============METHOD OVERLOADING===============
+
+    public void displayStudents(ArrayList<Student> studentList) {
+
+        if(studentList.isEmpty()){
+            System.out.println("No Students Found.");
+            return;
+        }
+
+        for (Student student : studentList) {
+            System.out.println(student);
         }
 
     }
