@@ -1,6 +1,8 @@
 package service;
 
 import java.util.Scanner;
+
+import exception.StudentNotFoundException;
 import model.Student;
 import util.StudentValidator;
 import database.FileManager;
@@ -362,25 +364,22 @@ public class StudentService {
 
     // ================= SEARCH STUDENT BY ID =================
 
-    public Student searchStudentById(int id) {
+    public Student searchStudentById(int id) throws StudentNotFoundException {
 
         for (Student student : students) {
 
             if (student.getId() == id) {
-
                 return student;
-
             }
-
         }
 
-        return null;
-
+        throw new StudentNotFoundException("Student with ID " + id + " not found.");
     }
 
 //    ==================SEARCH STUDENT BY NAME======================
 
-public ArrayList<Student> searchStudentByName(String name){
+    public ArrayList<Student> searchStudentByName(String name)
+            throws StudentNotFoundException{
 
     ArrayList<Student> result = new ArrayList<>();
 
@@ -391,24 +390,35 @@ public ArrayList<Student> searchStudentByName(String name){
         }
     }
 
+    if (result.isEmpty()) {
+        throw new StudentNotFoundException("Student with Name " + name + " not found");
+    }
+
     return result;
 }
 
 //=====================SEARCH BY COURSE=======================
 
-public ArrayList<Student> searchStudentByCourse(String course){
+    public ArrayList<Student> searchStudentByCourse(String course)
+            throws StudentNotFoundException {
 
-    ArrayList<Student> result = new ArrayList<>();
+        ArrayList<Student> result = new ArrayList<>();
 
-    for(Student student : students){
+        for (Student student : students) {
 
-        if(student.getCourse().equalsIgnoreCase(course)){
-            result.add(student);
+            if (student.getCourse().equalsIgnoreCase(course)) {
+                result.add(student);
+            }
         }
-    }
 
-    return result;
-}
+        if (result.isEmpty()) {
+            throw new StudentNotFoundException(
+                    "Student with Course " + course + " not found."
+            );
+        }
+
+        return result;
+    }
 
 
     // ================= UPDATE STUDENT =================
@@ -420,7 +430,7 @@ public ArrayList<Student> searchStudentByCourse(String course){
                                  int semester,
                                  String email,
                                  String phone,
-                                 double cgpa) {
+                                 double cgpa) throws StudentNotFoundException{
 
         Student student = searchStudentById(id);
 
@@ -448,12 +458,6 @@ public ArrayList<Student> searchStudentByCourse(String course){
             return false;
         }
 
-        if (student == null) {
-
-            return false;
-
-        }
-
         student.setName(name);
         student.setAge(age);
         student.setCourse(course);
@@ -470,15 +474,9 @@ public ArrayList<Student> searchStudentByCourse(String course){
 
     // ================= DELETE STUDENT =================
 
-    public boolean deleteStudent(int id) {
+    public boolean deleteStudent(int id) throws StudentNotFoundException{
 
         Student student = searchStudentById(id);
-
-        if (student == null) {
-
-            return false;
-
-        }
 
         students.remove(student);
 

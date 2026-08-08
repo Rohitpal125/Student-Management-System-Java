@@ -2,6 +2,7 @@ package main;
 
 import model.Student;
 import service.StudentService;
+import exception.StudentNotFoundException;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -108,47 +109,53 @@ public class Main {
                                     System.out.println("Enter Student ID : ");
                                     id = sc.nextInt();
 
-                                    Student s = service.searchStudentById(id);
+                                    try {
+                                        Student Foundstudent = service.searchStudentById(id);
+                                        System.out.println(Foundstudent);
 
-                                    if (s != null) {
-
-                                        System.out.println(s);
-
-                                    } else {
-
-                                        System.out.println("Student Not Found.");
-
+                                    } catch (StudentNotFoundException e) {
+                                        System.out.println(e.getMessage());
                                     }
 
                                     break;
 
                                 case 2:
                                     // Search by Name
-                                    System.out.print("Enter Student Name: ");
+                                    System.out.print("Enter your Name: ");
                                     name = sc.nextLine();
+                                    try {
 
-                                    ArrayList<Student> n = service.searchStudentByName(name);
+                                        ArrayList<Student> result = service.searchStudentByName(name);
 
-                                    if(!n.isEmpty()){
-                                        System.out.println(n);
-                                    }else{
-                                        System.out.println("Student Not found");
+                                        service.displayStudents(result);
+
+                                    }
+                                    catch (StudentNotFoundException e) {
+
+                                        System.out.println(e.getMessage());
+
                                     }
                                     break;
 
                                 case 3:
                                     // Search by Course
-                                    System.out.print("Enter your Course: ");
+
+                                    System.out.print("Enter Course: ");
                                     course = sc.nextLine();
 
-                                    ArrayList<Student> c = service.searchStudentByCourse(course);
+                                    try {
 
-                                    if(!c.isEmpty()){
-                                        System.out.println(c);
+                                        ArrayList<Student> result =
+                                                service.searchStudentByCourse(course);
+
+                                        service.displayStudents(result);
+
+                                    } catch (StudentNotFoundException e) {
+
+                                        System.out.println(e.getMessage());
+
                                     }
-                                    else{
-                                        System.out.println("Student Not Found");
-                                    }
+
                                     break;
 
                                 case 4:
@@ -193,25 +200,28 @@ public class Main {
                         System.out.print("Enter New CGPA : ");
                         cgpa = sc.nextDouble();
 
-                        boolean updated = service.updateStudent(
-                                id,
-                                name,
-                                age,
-                                course,
-                                semester,
-                                email,
-                                phone,
-                                cgpa
-                        );
+                        try {
 
-                        if (updated) {
+                            boolean updated = service.updateStudent(
+                                    id,
+                                    name,
+                                    age,
+                                    course,
+                                    semester,
+                                    email,
+                                    phone,
+                                    cgpa
+                            );
 
-                            System.out.println("Student Updated Successfully.");
+                            if (updated) {
+                                System.out.println("Student Updated Successfully.");
+                            } else {
+                                System.out.println("Student Not Found.");
+                            }
 
-                        } else {
-
-                            System.out.println("Student Not Found.");
-
+                        }
+                        catch (StudentNotFoundException e) {
+                            System.out.println(e.getMessage());
                         }
 
                         break;
@@ -221,16 +231,22 @@ public class Main {
                         System.out.print("Enter Student ID : ");
                         id = sc.nextInt();
 
-                        boolean deleted = service.deleteStudent(id);
+                        try {
+                            boolean deleted = service.deleteStudent(id);
 
-                        if (deleted) {
+                            if (deleted) {
 
-                            System.out.println("Student Deleted Successfully.");
+                                System.out.println("Student Deleted Successfully.");
 
-                        } else {
+                            } else {
 
-                            System.out.println("Student Not Found.");
+                                System.out.println("Student Not Found.");
 
+                            }
+
+                        }
+                        catch (StudentNotFoundException e){
+                            System.out.println(e.getMessage());
                         }
 
                         break;
