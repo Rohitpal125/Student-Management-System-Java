@@ -1,3 +1,6 @@
 54,Rohit Pal,22,Btech,6,rohitpal@gmail.com,9690965630,8.2
 35,Lakshay Bhoria,23,Btech,6,lakshay@gmail.com,8965325478,7.9
 26,Bharat,20,Btech AIML,5,bharat@gmail.com,6589745635,7.1
+66,diksha,22,nursing,5,diksha@gmail.com,8974563254,9.0
+85,58,21,btech,5,kr@gmail.com,8965758965,8.0
+1,Anshika,24,BTC,4,anshika@gmail.com,8965745896,8.0

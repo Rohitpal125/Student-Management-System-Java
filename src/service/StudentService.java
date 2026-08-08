@@ -28,26 +28,26 @@ public class StudentService {
 
 //    ==============Average CGPA===================
 
-    public double getAvrCgpa(){
-        double totalcgpa = 0;
-        if(students.isEmpty()){
-            System.out.println("No Student found");
+    public double getAvrCgpa() {
+
+        double totalCgpa = 0;
+
+        if (isStudentListEmpty()) {
+            System.out.println("No Student Found");
             return 0;
         }
-        else {
 
-            for(Student student : students){
-                totalcgpa = totalcgpa + student.getCgpa();
-            }
+        for (Student student : students) {
+            totalCgpa = totalCgpa + student.getCgpa();
         }
-        return totalcgpa/students.size();
-    }
 
+        return totalCgpa / students.size();
+    }
 //    =============HIGHEST CGPA==================
 
     public Student getHighestCgpa(){
 
-        if(students.isEmpty()){
+        if(isStudentListEmpty()){
             return null;
         }
         Student highstudent = students.get(0);
@@ -62,39 +62,46 @@ public class StudentService {
 
 //    ==================LOWESTcGPA==================
 
-    public Student getLowestCgpa(){
+    public Student getLowestCgpa() {
 
-        if(students.isEmpty()){
+        if (isStudentListEmpty()) {
             return null;
         }
-        Student lowstudent = students.get(0);
-        for (Student student : students){
-            if (student.getCgpa() < lowstudent.getCgpa()){
-                lowstudent = student;
+
+        Student lowStudent = students.get(0);
+
+        for (Student student : students) {
+
+            if (student.getCgpa() < lowStudent.getCgpa()) {
+                lowStudent = student;
             }
         }
-        return lowstudent;
+
+        return lowStudent;
     }
 
 //    ===================STUDENTPECOURSE================
 
-    public void studentsPerCourse(){
-        HashMap<String,Integer> map = new HashMap<>();
-        if(students.isEmpty()){
-            System.out.println("Student not found");
-            return;
-        }
-        else {
-            for (Student student : students){
-                String course = student.getCourse();
+public void studentsPerCourse() {
 
-                map.put(course, map.getOrDefault(course,0) + 1);
-            }
-            for (Map.Entry<String, Integer> entry : map.entrySet()) {
-                System.out.println(entry.getKey() + " : " + entry.getValue());
-            }
-        }
+    HashMap<String, Integer> map = new HashMap<>();
+
+    if (isStudentListEmpty()) {
+        System.out.println("Student not found");
+        return;
     }
+
+    for (Student student : students) {
+
+        String course = student.getCourse();
+
+        map.put(course, map.getOrDefault(course, 0) + 1);
+    }
+
+    for (Map.Entry<String, Integer> entry : map.entrySet()) {
+        System.out.println(entry.getKey() + " : " + entry.getValue());
+    }
+}
 
 //    ===================STUDENTS PA semester===============
 
@@ -102,8 +109,8 @@ public class StudentService {
     public void studentpaSemester(){
         HashMap<Integer, Integer> map = new HashMap<>();
 
-        if(students.isEmpty()){
-            System.out.println("Not Found Student");
+        if (isStudentListEmpty()) {
+            System.out.println("Student not found");
             return;
         }
             for(Student student : students){
@@ -121,8 +128,8 @@ public class StudentService {
 //    ==================SORT STUDENTS BY NAME=======================
 
     public void sortByName(){
-        if(students.isEmpty()){
-            System.out.println("No Student Found");
+        if (isStudentListEmpty()) {
+            System.out.println("Student not found");
             return;
         }
         Collections.sort(students, (s1, s2) -> s1.getName().compareTo(s2.getName()) );
@@ -134,8 +141,8 @@ public class StudentService {
 
     public void sortByCgpa(){
 
-        if(students.isEmpty()){
-            System.out.println("Not found");
+        if (isStudentListEmpty()) {
+            System.out.println("Student not found");
             return;
         }
         Collections.sort(students, (s1, s2) -> Double.compare(s2.getCgpa(), s1.getCgpa()));
@@ -146,8 +153,8 @@ public class StudentService {
 //    ==================SORT BY AGE==============
 
     public void sortByAge(){
-        if(students.isEmpty()){
-            System.out.println("Not Found");
+        if (isStudentListEmpty()) {
+            System.out.println("Student not found");
             return;
         }
         Collections.sort(students, (s1, s2)-> Integer.compare(s2.getAge(), s1.getAge()));
@@ -159,7 +166,7 @@ public class StudentService {
 
     public void sortBySemester(){
 
-        if(students.isEmpty()){
+        if (isStudentListEmpty()) {
             System.out.println("Student not found");
             return;
         }
@@ -169,37 +176,40 @@ public class StudentService {
 
 //    ================FILTER BY CGPA================
 
-    public void filterByCgpa(){
-        if(students.isEmpty()){
-            System.out.println("Not Student Found");
+    public void filterByCgpa() {
+
+        if (isStudentListEmpty()) {
+            System.out.println("Student not found");
             return;
         }
-        System.out.print("Enter Minimum sgpa: ");
-        double MinimumCgpa = sc.nextDouble();
+
+        System.out.print("Enter Minimum CGPA: ");
+        double minimumCgpa = sc.nextDouble();
         sc.nextLine();
 
         ArrayList<Student> filterStudents = new ArrayList<>();
 
-        for (Student student : students){
-            if(student.getCgpa() >= MinimumCgpa){
+        for (Student student : students) {
+
+            if (student.getCgpa() >= minimumCgpa) {
                 filterStudents.add(student);
             }
         }
-        if(filterStudents.isEmpty()){
+
+        if (filterStudents.isEmpty()) {
             System.out.println("No Found Student");
             return;
         }
-        else {
-            displayStudents(filterStudents);
-        }
 
+        displayStudents(filterStudents);
     }
 
 //    =================FILTER BY AGE===================
 
     public void filterByAge(){
-        if(students.isEmpty()){
-            System.out.println("Not Student Found");
+        if (isStudentListEmpty()) {
+            System.out.println("Student not found");
+            return;
         }
         System.out.print("Enter Minimum Age: ");
         int MinimumAge = sc.nextInt();
@@ -212,20 +222,19 @@ public class StudentService {
                 filterStudent.add(student);
             }
         }
-        if (filterStudent.isEmpty()){
+        if (filterStudent.isEmpty()) {
             System.out.println("Not Found Student");
             return;
         }
-        else {
-            displayStudents(filterStudent);
-        }
+
+        displayStudents(filterStudent);
     }
 
 //    ================FILTER BY SEMESTER=============
 
     public void filterBySemester(){
-        if(students.isEmpty()){
-            System.out.println("Not Student Found");
+        if (isStudentListEmpty()) {
+            System.out.println("Student not found");
             return;
         }
         else {
@@ -244,17 +253,15 @@ public class StudentService {
                 System.out.println("Not found Student");
                 return;
             }
-            else {
-                displayStudents(filterStudent);
-            }
+            displayStudents(filterStudent);
         }
     }
 
 //    ===============FILTER BY COURSE=========
 
     public void filterByCourse(){
-        if(students.isEmpty()){
-            System.out.println("Not student found");
+        if (isStudentListEmpty()) {
+            System.out.println("Student not found");
             return;
         }
         else {
@@ -272,9 +279,9 @@ public class StudentService {
                 System.out.println("Not Student Found");
                 return;
             }
-            else {
-                displayStudents(filterStudent);
-            }
+
+            displayStudents(filterStudent);
+
         }
     }
 
@@ -286,45 +293,19 @@ public class StudentService {
 
     // ================= ADD STUDENT =================
 
-    public void addStudent(Student student){
+    public void addStudent(Student student) {
 
-        if (!StudentValidator.isValidName(student.getName())) {
-            System.out.println("Invalid Name!");
+        if (!isValidStudent(student)) {
             return;
         }
 
-        if (!StudentValidator.isValidAge(student.getAge())) {
-            System.out.println("Invalid Age!");
-            return;
-        }
-
-        if (!StudentValidator.isValidEmail(student.getEmail())) {
-            System.out.println("Invalid Email!");
-            return;
-        }
-
-        if (!StudentValidator.isValidPhone(student.getPhone())) {
-            System.out.println("Invalid Phone Number!");
-            return;
-        }
-
-        if (!StudentValidator.isValidSemester(student.getSemester())) {
-            System.out.println("Invalid Semester!");
-            return;
-        }
-
-        if (!StudentValidator.isValidCgpa((int) student.getCgpa())) {
-            System.out.println("Invalid CGPA!");
-            return;
-        }
-
-        if(students.contains(student)){
+        if (students.contains(student)) {
             System.out.println("Student already exists!");
             return;
         }
 
         students.add(student);
-        fileManager.saveStudents(students);
+        saveStudents();
 
         System.out.println("Student Added Successfully.");
     }
@@ -333,13 +314,10 @@ public class StudentService {
 
     public void displayStudents() {
 
-        if (students.isEmpty()) {
-
-            System.out.println("No Student Found.");
+        if (isStudentListEmpty()) {
+            System.out.println("Student not found");
             return;
-
         }
-
         for (Student student : students) {
 
             System.out.println(student);
@@ -351,15 +329,14 @@ public class StudentService {
 
     public void displayStudents(ArrayList<Student> studentList) {
 
-        if(studentList.isEmpty()){
-            System.out.println("No Students Found.");
+        if (studentList.isEmpty()) {
+            System.out.println("Student not found");
             return;
         }
 
         for (Student student : studentList) {
             System.out.println(student);
         }
-
     }
 
     // ================= SEARCH STUDENT BY ID =================
@@ -430,31 +407,22 @@ public class StudentService {
                                  int semester,
                                  String email,
                                  String phone,
-                                 double cgpa) throws StudentNotFoundException{
+                                 double cgpa) throws StudentNotFoundException {
 
         Student student = searchStudentById(id);
 
-        if (!StudentValidator.isValidName(name)) {
-            return false;
-        }
+        Student updatedStudent = new Student(
+                id,
+                name,
+                age,
+                course,
+                semester,
+                email,
+                phone,
+                cgpa
+        );
 
-        if (!StudentValidator.isValidAge(age)) {
-            return false;
-        }
-
-        if (!StudentValidator.isValidEmail(email)) {
-            return false;
-        }
-
-        if (!StudentValidator.isValidPhone(phone)) {
-            return false;
-        }
-
-        if (!StudentValidator.isValidSemester(semester)) {
-            return false;
-        }
-
-        if (!StudentValidator.isValidCgpa((int) cgpa)) {
+        if (!isValidStudent(updatedStudent)) {
             return false;
         }
 
@@ -466,10 +434,9 @@ public class StudentService {
         student.setPhone(phone);
         student.setCgpa(cgpa);
 
-        fileManager.saveStudents(students);
+        saveStudents();
 
         return true;
-
     }
 
     // ================= DELETE STUDENT =================
@@ -480,10 +447,52 @@ public class StudentService {
 
         students.remove(student);
 
-        fileManager.saveStudents(students);
+        saveStudents();
 
         return true;
 
+    }
+    private boolean isStudentListEmpty() {
+        return students.isEmpty();
+    }
+
+    private void saveStudents() {
+        fileManager.saveStudents(students);
+    }
+
+    private boolean isValidStudent(Student student) {
+
+        if (!StudentValidator.isValidName(student.getName())) {
+            System.out.println("Invalid Name!");
+            return false;
+        }
+
+        if (!StudentValidator.isValidAge(student.getAge())) {
+            System.out.println("Invalid Age!");
+            return false;
+        }
+
+        if (!StudentValidator.isValidEmail(student.getEmail())) {
+            System.out.println("Invalid Email!");
+            return false;
+        }
+
+        if (!StudentValidator.isValidPhone(student.getPhone())) {
+            System.out.println("Invalid Phone Number!");
+            return false;
+        }
+
+        if (!StudentValidator.isValidSemester(student.getSemester())) {
+            System.out.println("Invalid Semester!");
+            return false;
+        }
+
+        if (!StudentValidator.isValidCgpa((int) student.getCgpa())) {
+            System.out.println("Invalid CGPA!");
+            return false;
+        }
+
+        return true;
     }
 
 }

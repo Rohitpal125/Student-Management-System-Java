@@ -4,9 +4,10 @@ public class StudentValidator {
 
 //    ================NAME VALIDATION=============
 
-    public static boolean isValidName(String name){
-
-        return name!=null && !name.trim().isEmpty();
+    public static boolean isValidName(String name) {
+        return name != null
+                && !name.trim().isEmpty()
+                && name.matches("[a-zA-Z]+( [a-zA-Z]+)*");
     }
 
 //    ==============AGE VALIDATION================
