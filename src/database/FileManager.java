@@ -1,13 +1,16 @@
 package database;
 
 import model.Student;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.io.*;
 import java.util.ArrayList;
 
 public class FileManager {
 
     private static final String FILE_NAME = "students.txt";
+
+    private static final Logger logger = Logger.getLogger(FileManager.class.getName());
 
     // ================= SAVE STUDENTS =================
 
@@ -40,8 +43,7 @@ public class FileManager {
 
         } catch (Exception e) {
 
-            System.out.println("Error Saving File.");
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error saving students file.", e);
 
         }
 
@@ -85,15 +87,10 @@ public class FileManager {
             br.close();
 
         } catch (FileNotFoundException e) {
-
-            System.out.println("students.txt not found.");
-            System.out.println("New file will be created automatically.");
+            logger.info("students.txt not found. New file will be created automatically.");
 
         } catch (Exception e) {
-
-            System.out.println("Error Loading File.");
-            e.printStackTrace();
-
+            logger.log(Level.SEVERE, "Error loading students file.", e);
         }
 
         return students;

@@ -11,12 +11,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 
 public class StudentService {
 
     private final ArrayList<Student> students = new ArrayList<>();
     private final FileManager fileManager = new FileManager();
+
+    private static final Logger logger = Logger.getLogger(StudentService.class.getName());
 
     Scanner sc = new Scanner(System.in);
 
@@ -300,12 +303,15 @@ public void studentsPerCourse() {
         }
 
         if (students.contains(student)) {
+            logger.warning("Student already exists. ID: " + student.getId());
             System.out.println("Student already exists!");
             return;
         }
 
         students.add(student);
         saveStudents();
+
+        logger.info("Student added successfully. ID: " + student.getId());
 
         System.out.println("Student Added Successfully.");
     }
@@ -349,6 +355,9 @@ public void studentsPerCourse() {
                 return student;
             }
         }
+
+        logger.warning("Student with ID " + id + " not found.");
+
 
         throw new StudentNotFoundException("Student with ID " + id + " not found.");
     }
@@ -436,6 +445,8 @@ public void studentsPerCourse() {
 
         saveStudents();
 
+        logger.info("Student updated successfully. ID: " + id);
+
         return true;
     }
 
@@ -448,6 +459,9 @@ public void studentsPerCourse() {
         students.remove(student);
 
         saveStudents();
+
+        logger.info("Student deleted successfully. ID: " + id);
+
 
         return true;
 
