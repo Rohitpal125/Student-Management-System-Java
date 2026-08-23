@@ -30,7 +30,7 @@ public class StudentService {
 //    =============GET TOTAL STUDENTS==============
 
     public int getTotalStudents() {
-        return students.size();
+        return studentDAO.getTotalStudents();
     }
 
 //    =============GET AL STUDENTS================
@@ -57,100 +57,32 @@ public class StudentService {
 //    ==============Average CGPA===================
 
     public double getAvrCgpa() {
-
-        double totalCgpa = 0;
-
-        if (isStudentListEmpty()) {
-            System.out.println("No Student Found");
-            return 0;
-        }
-
-        for (Student student : students) {
-            totalCgpa = totalCgpa + student.getCgpa();
-        }
-
-        return totalCgpa / students.size();
+        return studentDAO.getAverageCgpa();
     }
 //    =============HIGHEST CGPA==================
 
-    public Student getHighestCgpa(){
-
-        if(isStudentListEmpty()){
-            return null;
-        }
-        Student highstudent = students.get(0);
-        for (Student student : students){
-
-            if(student.getCgpa() > highstudent.getCgpa()){
-                    highstudent = student;
-                }
-        }
-        return highstudent;
+    public Student getHighestCgpa() {
+        return studentDAO.getHighestCgpa();
     }
-
 //    ==================LOWESTcGPA==================
 
     public Student getLowestCgpa() {
-
-        if (isStudentListEmpty()) {
-            return null;
-        }
-
-        Student lowStudent = students.get(0);
-
-        for (Student student : students) {
-
-            if (student.getCgpa() < lowStudent.getCgpa()) {
-                lowStudent = student;
-            }
-        }
-
-        return lowStudent;
+        return studentDAO.getLowestCgpa();
     }
 
 //    ===================STUDENTPECOURSE================
 
-public void studentsPerCourse() {
+    public void studentsPerCourse() {
 
-    HashMap<String, Integer> map = new HashMap<>();
-
-    if (isStudentListEmpty()) {
-        System.out.println("Student not found");
-        return;
+        studentDAO.studentsPerCourse();
     }
-
-    for (Student student : students) {
-
-        String course = student.getCourse();
-
-        map.put(course, map.getOrDefault(course, 0) + 1);
-    }
-
-    for (Map.Entry<String, Integer> entry : map.entrySet()) {
-        System.out.println(entry.getKey() + " : " + entry.getValue());
-    }
-}
 
 //    ===================STUDENTS PA semester===============
 
 
-    public void studentpaSemester(){
-        HashMap<Integer, Integer> map = new HashMap<>();
+    public void studentpaSemester() {
 
-        if (isStudentListEmpty()) {
-            System.out.println("Student not found");
-            return;
-        }
-            for(Student student : students){
-                int semester = student.getSemester();
-
-                map.put(semester, map.getOrDefault(semester, 0) + 1);
-
-            }
-            for(Map.Entry<Integer, Integer> entry : map.entrySet()) {
-
-                System.out.println("Semister " + entry.getKey() + " : " + entry.getValue());
-            }
+        studentDAO.studentsPerSemester();
     }
 
 //    ==================SORT STUDENTS BY NAME=======================

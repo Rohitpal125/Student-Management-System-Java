@@ -300,4 +300,175 @@ public class StudentDAO {
 
         return students;
     }
+
+    public int getTotalStudents() {
+
+        String sql = "SELECT COUNT(*) FROM students";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public double getAverageCgpa() {
+
+        String sql = "SELECT AVG(cgpa) FROM students";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0.0;
+    }
+
+    public Student getHighestCgpa() {
+
+        String sql = "SELECT * FROM students " +
+                "ORDER BY cgpa DESC " +
+                "LIMIT 1";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+
+            if (rs.next()) {
+
+                String courseName =
+                        getCourseName(connection, rs.getInt("course_id"));
+
+                return new Student(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("age"),
+                        courseName,
+                        rs.getInt("semester"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getDouble("cgpa")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public Student getLowestCgpa() {
+
+        String sql = "SELECT * FROM students " +
+                "ORDER BY cgpa ASC " +
+                "LIMIT 1";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+
+            if (rs.next()) {
+
+                String courseName =
+                        getCourseName(connection, rs.getInt("course_id"));
+
+                return new Student(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("age"),
+                        courseName,
+                        rs.getInt("semester"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getDouble("cgpa")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public void studentsPerCourse() {
+
+        String sql = "SELECT c.course_name, COUNT(s.id) AS student_count " +
+                "FROM courses c " +
+                "LEFT JOIN students s " +
+                "ON c.course_id = s.course_id " +
+                "GROUP BY c.course_id, c.course_name " +
+                "ORDER BY c.course_name";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+
+            while (rs.next()) {
+
+                System.out.println(
+                        rs.getString("course_name") +
+                                " : " +
+                                rs.getInt("student_count")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void studentsPerSemester() {
+
+        String sql = "SELECT semester, COUNT(id) AS student_count " +
+                "FROM students " +
+                "GROUP BY semester " +
+                "ORDER BY semester";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+
+            while (rs.next()) {
+
+                System.out.println(
+                        "Semester " +
+                                rs.getInt("semester") +
+                                " : " +
+                                rs.getInt("student_count")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
