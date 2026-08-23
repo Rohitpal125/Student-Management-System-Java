@@ -4,3 +4,4 @@
 66,diksha,22,nursing,5,diksha@gmail.com,8974563254,9.0
 85,58,21,btech,5,kr@gmail.com,8965758965,8.0
 1,Anshika,24,BTC,4,anshika@gmail.com,8965745896,8.0
+2,Kittu,19,GNM,4,kittu@gmail.com,7546983564,5.0

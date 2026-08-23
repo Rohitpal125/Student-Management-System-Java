@@ -12,12 +12,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import database.StudentDAO;
 
 
 public class StudentService {
 
     private final ArrayList<Student> students = new ArrayList<>();
     private final FileManager fileManager = new FileManager();
+
+    private final StudentDAO studentDAO = new StudentDAO();
+
 
     private static final Logger logger = Logger.getLogger(StudentService.class.getName());
 
@@ -27,6 +31,12 @@ public class StudentService {
 
     public int getTotalStudents() {
         return students.size();
+    }
+
+//    =============GET AL STUDENTS================
+
+    public void getAllStudents() {
+        studentDAO.getAllStudents();
     }
 
 //    ==============Average CGPA===================
@@ -308,8 +318,9 @@ public void studentsPerCourse() {
             return;
         }
 
+        studentDAO.addStudent(student);
+
         students.add(student);
-        saveStudents();
 
         logger.info("Student added successfully. ID: " + student.getId());
 
