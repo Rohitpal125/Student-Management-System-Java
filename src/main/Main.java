@@ -106,12 +106,12 @@ public class Main {
 
                                 case 1:
                                     // Search by ID
-                                    System.out.println("Enter Student ID : ");
+                                    System.out.print("Enter Student ID : ");
                                     id = sc.nextInt();
 
                                     try {
-                                        Student Foundstudent = service.searchStudentById(id);
-                                        System.out.println(Foundstudent);
+                                        Student foundStudent = service.getStudentById(id);
+                                        System.out.println(foundStudent);
 
                                     } catch (StudentNotFoundException e) {
                                         System.out.println(e.getMessage());

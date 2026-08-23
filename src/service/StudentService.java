@@ -41,8 +41,17 @@ public class StudentService {
 
 //    ============GET STUDENT BY ID=================
 
-    public void getStudentById(int id) {
-        studentDAO.getStudentById(id);
+    public Student getStudentById(int id) throws StudentNotFoundException {
+
+        Student student = studentDAO.getStudentById(id);
+
+        if (student == null) {
+            throw new StudentNotFoundException(
+                    "Student with ID " + id + " not found."
+            );
+        }
+
+        return student;
     }
 
 //    ==============Average CGPA===================
@@ -337,15 +346,7 @@ public void studentsPerCourse() {
 
     public void displayStudents() {
 
-        if (isStudentListEmpty()) {
-            System.out.println("Student not found");
-            return;
-        }
-        for (Student student : students) {
-
-            System.out.println(student);
-
-        }
+        studentDAO.getAllStudents();
 
     }
 //    ===============METHOD OVERLOADING===============
@@ -379,50 +380,39 @@ public void studentsPerCourse() {
         throw new StudentNotFoundException("Student with ID " + id + " not found.");
     }
 
-//    ==================SEARCH STUDENT BY NAME======================
+// ================== SEARCH STUDENT BY NAME ======================
 
     public ArrayList<Student> searchStudentByName(String name)
-            throws StudentNotFoundException{
-
-    ArrayList<Student> result = new ArrayList<>();
-
-    for(Student student : students){
-
-        if(student.getName().equalsIgnoreCase(name)){
-            result.add(student);
-        }
-    }
-
-    if (result.isEmpty()) {
-        throw new StudentNotFoundException("Student with Name " + name + " not found");
-    }
-
-    return result;
-}
-
-//=====================SEARCH BY COURSE=======================
-
-    public ArrayList<Student> searchStudentByCourse(String course)
             throws StudentNotFoundException {
 
-        ArrayList<Student> result = new ArrayList<>();
-
-        for (Student student : students) {
-
-            if (student.getCourse().equalsIgnoreCase(course)) {
-                result.add(student);
-            }
-        }
+        ArrayList<Student> result =
+                new ArrayList<>(studentDAO.searchStudentByName(name));
 
         if (result.isEmpty()) {
             throw new StudentNotFoundException(
-                    "Student with Course " + course + " not found."
+                    "Student with Name " + name + " not found"
             );
         }
 
         return result;
     }
 
+/// ================== SEARCH STUDENT BY COURSE ======================
+
+public ArrayList<Student> searchStudentByCourse(String course)
+        throws StudentNotFoundException {
+
+    ArrayList<Student> result =
+            new ArrayList<>(studentDAO.searchStudentByCourse(course));
+
+    if (result.isEmpty()) {
+        throw new StudentNotFoundException(
+                "Student with Course " + course + " not found"
+        );
+    }
+
+    return result;
+}
 
     // ================= UPDATE STUDENT =================
 

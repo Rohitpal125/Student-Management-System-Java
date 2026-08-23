@@ -1,7 +1,11 @@
 package main;
 
 import exception.StudentNotFoundException;
+import model.Student;
 import service.StudentService;
+
+import java.util.ArrayList;
+
 public class ConnectionTest {
 
     public static void main(String[] args) {
@@ -10,12 +14,14 @@ public class ConnectionTest {
 
         try {
 
-            service.deleteStudent(6);
+            ArrayList<Student> result =
+                    service.searchStudentByCourse("AIML");
+
+            service.displayStudents(result);
 
         } catch (StudentNotFoundException e) {
 
-            System.out.println("Student not found!");
-
+            System.out.println(e.getMessage());
         }
     }
 }
