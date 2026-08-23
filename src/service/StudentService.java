@@ -39,6 +39,12 @@ public class StudentService {
         studentDAO.getAllStudents();
     }
 
+//    ============GET STUDENT BY ID=================
+
+    public void getStudentById(int id) {
+        studentDAO.getStudentById(id);
+    }
+
 //    ==============Average CGPA===================
 
     public double getAvrCgpa() {
@@ -420,16 +426,16 @@ public void studentsPerCourse() {
 
     // ================= UPDATE STUDENT =================
 
-    public boolean updateStudent(int id,
-                                 String name,
-                                 int age,
-                                 String course,
-                                 int semester,
-                                 String email,
-                                 String phone,
-                                 double cgpa) throws StudentNotFoundException {
-
-        Student student = searchStudentById(id);
+    public boolean updateStudent(
+            int id,
+            String name,
+            int age,
+            String course,
+            int semester,
+            String email,
+            String phone,
+            double cgpa
+    ) throws StudentNotFoundException {
 
         Student updatedStudent = new Student(
                 id,
@@ -446,15 +452,7 @@ public void studentsPerCourse() {
             return false;
         }
 
-        student.setName(name);
-        student.setAge(age);
-        student.setCourse(course);
-        student.setSemester(semester);
-        student.setEmail(email);
-        student.setPhone(phone);
-        student.setCgpa(cgpa);
-
-        saveStudents();
+        studentDAO.updateStudent(updatedStudent);
 
         logger.info("Student updated successfully. ID: " + id);
 
@@ -463,27 +461,18 @@ public void studentsPerCourse() {
 
     // ================= DELETE STUDENT =================
 
-    public boolean deleteStudent(int id) throws StudentNotFoundException{
+    public boolean deleteStudent(int id) throws StudentNotFoundException {
 
-        Student student = searchStudentById(id);
-
-        students.remove(student);
-
-        saveStudents();
+        studentDAO.deleteStudent(id);
 
         logger.info("Student deleted successfully. ID: " + id);
 
-
         return true;
-
     }
     private boolean isStudentListEmpty() {
         return students.isEmpty();
     }
 
-    private void saveStudents() {
-        fileManager.saveStudents(students);
-    }
 
     private boolean isValidStudent(Student student) {
 

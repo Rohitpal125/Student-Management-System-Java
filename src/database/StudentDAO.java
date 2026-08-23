@@ -105,6 +105,47 @@ public class StudentDAO {
         }
     }
 
+    public void updateStudent(Student student) {
+
+        String sql = "UPDATE students SET " +
+                "name = ?, " +
+                "age = ?, " +
+                "email = ?, " +
+                "course_id = ?, " +
+                "semester = ?, " +
+                "phone = ?, " +
+                "cgpa = ? " +
+                "WHERE id = ?";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql)
+        ) {
+
+            int courseId = getCourseId(connection, student.getCourse());
+
+            ps.setString(1, student.getName());
+            ps.setInt(2, student.getAge());
+            ps.setString(3, student.getEmail());
+            ps.setInt(4, courseId);
+            ps.setInt(5, student.getSemester());
+            ps.setString(6, student.getPhone());
+            ps.setDouble(7, student.getCgpa());
+            ps.setInt(8, student.getId());
+
+            int rows = ps.executeUpdate();
+
+            if (rows > 0) {
+                System.out.println("Student updated successfully!");
+            } else {
+                System.out.println("Student not found!");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void updateStudent(int id, int age, double cgpa) {
 
         String sql = "UPDATE students SET age = ?, cgpa = ? WHERE id = ?";
