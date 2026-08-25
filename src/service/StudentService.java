@@ -5,7 +5,6 @@ import java.util.Scanner;
 import exception.StudentNotFoundException;
 import model.Student;
 import util.StudentValidator;
-import database.FileManager;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,8 +16,6 @@ import database.StudentDAO;
 
 public class StudentService {
 
-    private final ArrayList<Student> students = new ArrayList<>();
-    private final FileManager fileManager = new FileManager();
 
     private final StudentDAO studentDAO = new StudentDAO();
 
@@ -36,6 +33,7 @@ public class StudentService {
 //    =============GET AL STUDENTS================
 
     public void getAllStudents() {
+
         studentDAO.getAllStudents();
     }
 
@@ -87,191 +85,97 @@ public class StudentService {
 
 //    ==================SORT STUDENTS BY NAME=======================
 
-    public void sortByName(){
-        if (isStudentListEmpty()) {
-            System.out.println("Student not found");
-            return;
-        }
-        Collections.sort(students, (s1, s2) -> s1.getName().compareTo(s2.getName()) );
+    public void sortByName() {
 
-        displayStudents();
+        studentDAO.sortByName();
     }
 
 //    =================SORT BY CGPA==================
 
-    public void sortByCgpa(){
+    public void sortByCgpa() {
 
-        if (isStudentListEmpty()) {
-            System.out.println("Student not found");
-            return;
-        }
-        Collections.sort(students, (s1, s2) -> Double.compare(s2.getCgpa(), s1.getCgpa()));
-
-        displayStudents();
+        studentDAO.sortByCgpa();
     }
 
 //    ==================SORT BY AGE==============
 
-    public void sortByAge(){
-        if (isStudentListEmpty()) {
-            System.out.println("Student not found");
-            return;
-        }
-        Collections.sort(students, (s1, s2)-> Integer.compare(s2.getAge(), s1.getAge()));
+    public void sortByAge() {
 
-        displayStudents();
+        studentDAO.sortByAge();
     }
 
 //    ==============SORT BY SEMESTER=============
 
-    public void sortBySemester(){
+    public void sortBySemester() {
 
-        if (isStudentListEmpty()) {
-            System.out.println("Student not found");
-            return;
-        }
-        Collections.sort(students, (s2,s1)-> Integer.compare(s2.getSemester(), s1.getSemester()));
-        displayStudents();
+        studentDAO.sortBySemester();
     }
 
 //    ================FILTER BY CGPA================
 
     public void filterByCgpa() {
 
-        if (isStudentListEmpty()) {
-            System.out.println("Student not found");
-            return;
-        }
-
         System.out.print("Enter Minimum CGPA: ");
         double minimumCgpa = sc.nextDouble();
         sc.nextLine();
 
-        ArrayList<Student> filterStudents = new ArrayList<>();
-
-        for (Student student : students) {
-
-            if (student.getCgpa() >= minimumCgpa) {
-                filterStudents.add(student);
-            }
-        }
-
-        if (filterStudents.isEmpty()) {
-            System.out.println("No Found Student");
-            return;
-        }
-
-        displayStudents(filterStudents);
+        studentDAO.filterByCgpa(minimumCgpa);
     }
 
 //    =================FILTER BY AGE===================
 
-    public void filterByAge(){
-        if (isStudentListEmpty()) {
-            System.out.println("Student not found");
-            return;
-        }
+    public void filterByAge() {
+
         System.out.print("Enter Minimum Age: ");
-        int MinimumAge = sc.nextInt();
+        int minimumAge = sc.nextInt();
         sc.nextLine();
 
-        ArrayList<Student> filterStudent = new ArrayList<>();
-
-        for (Student student : students){
-            if(student.getAge() >= MinimumAge){
-                filterStudent.add(student);
-            }
-        }
-        if (filterStudent.isEmpty()) {
-            System.out.println("Not Found Student");
-            return;
-        }
-
-        displayStudents(filterStudent);
+        studentDAO.filterByAge(minimumAge);
     }
 
 //    ================FILTER BY SEMESTER=============
 
-    public void filterBySemester(){
-        if (isStudentListEmpty()) {
-            System.out.println("Student not found");
-            return;
-        }
-        else {
-            System.out.print("Enter Minimum Semester: ");
-            int minSemester = sc.nextInt();
-            sc.nextLine();
+    public void filterBySemester() {
 
-            ArrayList<Student> filterStudent = new ArrayList<>();
+        System.out.print("Enter Minimum Semester: ");
+        int minSemester = sc.nextInt();
+        sc.nextLine();
 
-            for (Student student : students){
-                if(student.getSemester() >= minSemester){
-                    filterStudent.add(student);
-                }
-            }
-            if(filterStudent.isEmpty()){
-                System.out.println("Not found Student");
-                return;
-            }
-            displayStudents(filterStudent);
-        }
+        studentDAO.filterBySemester(minSemester);
     }
 
 //    ===============FILTER BY COURSE=========
 
-    public void filterByCourse(){
-        if (isStudentListEmpty()) {
-            System.out.println("Student not found");
-            return;
-        }
-        else {
-            System.out.print("Enter Course: ");
-            String course = sc.nextLine();
+    public void filterByCourse() {
 
-            ArrayList<Student> filterStudent = new ArrayList<>();
+        System.out.print("Enter Course: ");
+        String course = sc.nextLine();
 
-            for (Student student : students){
-                if(student.getCourse().equalsIgnoreCase(course)){
-                    filterStudent.add(student);
-                }
-            }
-            if(filterStudent.isEmpty()){
-                System.out.println("Not Student Found");
-                return;
-            }
-
-            displayStudents(filterStudent);
-
-        }
+        studentDAO.filterByCourse(course);
     }
 
     // Constructor
     public StudentService() {
 
-        students.addAll(fileManager.loadStudents());
     }
 
     // ================= ADD STUDENT =================
 
-    public void addStudent(Student student) {
+    public boolean addStudent(Student student) {
 
         if (!isValidStudent(student)) {
-            return;
+            return false;
         }
 
-        if (students.contains(student)) {
-            logger.warning("Student already exists. ID: " + student.getId());
-            System.out.println("Student already exists!");
-            return;
+        boolean added = studentDAO.addStudent(student);
+
+        if (added) {
+            logger.info(
+                    "Student added successfully. ID: " + student.getId()
+            );
         }
 
-        studentDAO.addStudent(student);
-
-        students.add(student);
-
-        logger.info("Student added successfully. ID: " + student.getId());
-
-        System.out.println("Student Added Successfully.");
+        return added;
     }
 
     // ================= DISPLAY STUDENTS =================
@@ -295,22 +199,6 @@ public class StudentService {
         }
     }
 
-    // ================= SEARCH STUDENT BY ID =================
-
-    public Student searchStudentById(int id) throws StudentNotFoundException {
-
-        for (Student student : students) {
-
-            if (student.getId() == id) {
-                return student;
-            }
-        }
-
-        logger.warning("Student with ID " + id + " not found.");
-
-
-        throw new StudentNotFoundException("Student with ID " + id + " not found.");
-    }
 
 // ================== SEARCH STUDENT BY NAME ======================
 
@@ -374,25 +262,26 @@ public ArrayList<Student> searchStudentByCourse(String course)
             return false;
         }
 
-        studentDAO.updateStudent(updatedStudent);
+        boolean updated = studentDAO.updateStudent(updatedStudent);
 
-        logger.info("Student updated successfully. ID: " + id);
+        if (updated) {
+            logger.info("Student updated successfully. ID: " + id);
+        }
 
-        return true;
+        return updated;
     }
 
     // ================= DELETE STUDENT =================
 
     public boolean deleteStudent(int id) throws StudentNotFoundException {
 
-        studentDAO.deleteStudent(id);
+        boolean deleted = studentDAO.deleteStudent(id);
 
-        logger.info("Student deleted successfully. ID: " + id);
+        if (deleted) {
+            logger.info("Student deleted successfully. ID: " + id);
+        }
 
-        return true;
-    }
-    private boolean isStudentListEmpty() {
-        return students.isEmpty();
+        return deleted;
     }
 
 

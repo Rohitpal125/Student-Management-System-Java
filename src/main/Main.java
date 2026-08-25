@@ -76,7 +76,13 @@ public class Main {
                                 cgpa
                         );
 
-                        service.addStudent(student);
+                        boolean added = service.addStudent(student);
+
+                        if (added) {
+                            System.out.println("Student Added Successfully.");
+                        } else {
+                            System.out.println("Student could not be added.");
+                        }
 
                         break;
 
@@ -360,8 +366,7 @@ public class Main {
                                     break;
 
                                 case 4:
-                                    service.displayStudents();
-
+                                    service.sortBySemester();
                                     break;
 
                                 case 5:

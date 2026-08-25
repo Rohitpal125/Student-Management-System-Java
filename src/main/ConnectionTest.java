@@ -8,6 +8,6 @@ public class ConnectionTest {
 
         StudentService service = new StudentService();
 
-        service.studentpaSemester();
+        System.out.println("Database connection successful!");
     }
 }

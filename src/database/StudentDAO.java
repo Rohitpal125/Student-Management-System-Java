@@ -11,7 +11,7 @@ import java.util.List;
 
 public class StudentDAO {
 
-    public void addStudent(Student student) {
+    public boolean addStudent(Student student) {
 
         String sql = "INSERT INTO students " +
                 "(id, name, age, email, course_id, semester, phone, cgpa) " +
@@ -35,10 +35,11 @@ public class StudentDAO {
 
             int rows = ps.executeUpdate();
 
-            System.out.println(rows + " student inserted successfully!");
+            return rows > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -108,7 +109,7 @@ public class StudentDAO {
         }
     }
 
-    public void updateStudent(Student student) {
+    public boolean updateStudent(Student student) {
 
         String sql = "UPDATE students SET " +
                 "name = ?, " +
@@ -138,20 +139,16 @@ public class StudentDAO {
 
             int rows = ps.executeUpdate();
 
-            if (rows > 0) {
-                System.out.println("Student updated successfully!");
-            } else {
-                System.out.println("Student not found!");
-            }
+            return rows > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
 
-
-    public void deleteStudent(int id) {
+    public boolean deleteStudent(int id) {
 
         String sql = "DELETE FROM students WHERE id = ?";
 
@@ -164,14 +161,11 @@ public class StudentDAO {
 
             int rows = ps.executeUpdate();
 
-            if (rows > 0) {
-                System.out.println("Student deleted successfully!");
-            } else {
-                System.out.println("Student not found!");
-            }
+            return rows > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -465,6 +459,340 @@ public class StudentDAO {
                                 " : " +
                                 rs.getInt("student_count")
                 );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sortByName() {
+
+        String sql = "SELECT * FROM students " +
+                "ORDER BY name ASC";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+
+            while (rs.next()) {
+
+                String courseName =
+                        getCourseName(connection, rs.getInt("course_id"));
+
+                Student student = new Student(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("age"),
+                        courseName,
+                        rs.getInt("semester"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getDouble("cgpa")
+                );
+
+                System.out.println(student);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sortByCgpa() {
+
+        String sql = "SELECT * FROM students " +
+                "ORDER BY cgpa DESC";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+
+            while (rs.next()) {
+
+                String courseName =
+                        getCourseName(connection, rs.getInt("course_id"));
+
+                Student student = new Student(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("age"),
+                        courseName,
+                        rs.getInt("semester"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getDouble("cgpa")
+                );
+
+                System.out.println(student);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sortByAge() {
+
+        String sql = "SELECT * FROM students " +
+                "ORDER BY age DESC";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+
+            while (rs.next()) {
+
+                String courseName =
+                        getCourseName(connection, rs.getInt("course_id"));
+
+                Student student = new Student(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("age"),
+                        courseName,
+                        rs.getInt("semester"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getDouble("cgpa")
+                );
+
+                System.out.println(student);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sortBySemester() {
+
+        String sql = "SELECT * FROM students " +
+                "ORDER BY semester DESC";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()
+        ) {
+
+            while (rs.next()) {
+
+                String courseName =
+                        getCourseName(connection, rs.getInt("course_id"));
+
+                Student student = new Student(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("age"),
+                        courseName,
+                        rs.getInt("semester"),
+                        rs.getString("email"),
+                        rs.getString("phone"),
+                        rs.getDouble("cgpa")
+                );
+
+                System.out.println(student);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void filterByCgpa(double minimumCgpa) {
+
+        String sql = "SELECT * FROM students " +
+                "WHERE cgpa >= ? " +
+                "ORDER BY cgpa DESC";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql)
+        ) {
+
+            ps.setDouble(1, minimumCgpa);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                boolean found = false;
+
+                while (rs.next()) {
+
+                    found = true;
+
+                    String courseName =
+                            getCourseName(connection, rs.getInt("course_id"));
+
+                    Student student = new Student(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getInt("age"),
+                            courseName,
+                            rs.getInt("semester"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getDouble("cgpa")
+                    );
+
+                    System.out.println(student);
+                }
+
+                if (!found) {
+                    System.out.println("No Found Student");
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void filterByAge(int minimumAge) {
+
+        String sql = "SELECT * FROM students " +
+                "WHERE age >= ? " +
+                "ORDER BY age DESC";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql)
+        ) {
+
+            ps.setInt(1, minimumAge);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                boolean found = false;
+
+                while (rs.next()) {
+
+                    found = true;
+
+                    String courseName =
+                            getCourseName(connection, rs.getInt("course_id"));
+
+                    Student student = new Student(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getInt("age"),
+                            courseName,
+                            rs.getInt("semester"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getDouble("cgpa")
+                    );
+
+                    System.out.println(student);
+                }
+
+                if (!found) {
+                    System.out.println("Not Found Student");
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void filterBySemester(int minSemester) {
+
+        String sql = "SELECT * FROM students " +
+                "WHERE semester >= ? " +
+                "ORDER BY semester DESC";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql)
+        ) {
+
+            ps.setInt(1, minSemester);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                boolean found = false;
+
+                while (rs.next()) {
+
+                    found = true;
+
+                    String courseName =
+                            getCourseName(connection, rs.getInt("course_id"));
+
+                    Student student = new Student(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getInt("age"),
+                            courseName,
+                            rs.getInt("semester"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getDouble("cgpa")
+                    );
+
+                    System.out.println(student);
+                }
+
+                if (!found) {
+                    System.out.println("Not found Student");
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void filterByCourse(String courseName) {
+
+        String sql = "SELECT s.* " +
+                "FROM students s " +
+                "JOIN courses c ON s.course_id = c.course_id " +
+                "WHERE LOWER(c.course_name) = LOWER(?) " +
+                "ORDER BY s.id";
+
+        try (
+                Connection connection = DBConnection.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql)
+        ) {
+
+            ps.setString(1, courseName);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                boolean found = false;
+
+                while (rs.next()) {
+
+                    found = true;
+
+                    String course =
+                            getCourseName(connection, rs.getInt("course_id"));
+
+                    Student student = new Student(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getInt("age"),
+                            course,
+                            rs.getInt("semester"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getDouble("cgpa")
+                    );
+
+                    System.out.println(student);
+                }
+
+                if (!found) {
+                    System.out.println("Not Student Found");
+                }
             }
 
         } catch (SQLException e) {
