@@ -206,28 +206,21 @@ public class Main {
                         System.out.print("Enter New CGPA : ");
                         cgpa = sc.nextDouble();
 
-                        try {
+                        boolean updated = service.updateStudent(
+                                id,
+                                name,
+                                age,
+                                course,
+                                semester,
+                                email,
+                                phone,
+                                cgpa
+                        );
 
-                            boolean updated = service.updateStudent(
-                                    id,
-                                    name,
-                                    age,
-                                    course,
-                                    semester,
-                                    email,
-                                    phone,
-                                    cgpa
-                            );
-
-                            if (updated) {
-                                System.out.println("Student Updated Successfully.");
-                            } else {
-                                System.out.println("Student Not Found.");
-                            }
-
-                        }
-                        catch (StudentNotFoundException e) {
-                            System.out.println(e.getMessage());
+                        if (updated) {
+                            System.out.println("Student Updated Successfully.");
+                        } else {
+                            System.out.println("Student Not Found.");
                         }
 
                         break;
@@ -237,22 +230,12 @@ public class Main {
                         System.out.print("Enter Student ID : ");
                         id = sc.nextInt();
 
-                        try {
-                            boolean deleted = service.deleteStudent(id);
+                        boolean deleted = service.deleteStudent(id);
 
-                            if (deleted) {
-
-                                System.out.println("Student Deleted Successfully.");
-
-                            } else {
-
-                                System.out.println("Student Not Found.");
-
-                            }
-
-                        }
-                        catch (StudentNotFoundException e){
-                            System.out.println(e.getMessage());
+                        if (deleted) {
+                            System.out.println("Student Deleted Successfully.");
+                        } else {
+                            System.out.println("Student Not Found.");
                         }
 
                         break;
@@ -284,7 +267,7 @@ public class Main {
                                     break;
 
                                 case 2:
-                                    System.out.println("Average CGPA: " + service.getAvrCgpa());
+                                    System.out.println("Average CGPA: " + service.getAverageCgpa());
 
                                     break;
 
@@ -317,7 +300,7 @@ public class Main {
                                 case 6:
                                     System.out.println("Students Semester");
 
-                                    service.studentpaSemester();
+                                    service.studentsPerSemester();
                                     break;
 
                                 case 7:

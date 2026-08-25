@@ -40,6 +40,7 @@ public class StudentValidator {
 //    ====================CGPA VALIDATION=============
 
     public static boolean isValidCgpa(double cgpa){
-        return cgpa>=0 && cgpa <=10;
+
+        return cgpa>=0.0 && cgpa <=10.0;
     }
 }

@@ -60,7 +60,7 @@ public class StudentDAO {
                                 rs.getString("name") + " | " +
                                 rs.getInt("age") + " | " +
                                 rs.getString("email") + " | " +
-                                rs.getInt("course_id") + " | " +
+                                getCourseName(connection, rs.getInt("course_id"))+
                                 rs.getInt("semester") + " | " +
                                 rs.getString("phone") + " | " +
                                 rs.getDouble("cgpa")

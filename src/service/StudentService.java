@@ -5,11 +5,7 @@ import java.util.Scanner;
 import exception.StudentNotFoundException;
 import model.Student;
 import util.StudentValidator;
-import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 import database.StudentDAO;
 
@@ -30,12 +26,6 @@ public class StudentService {
         return studentDAO.getTotalStudents();
     }
 
-//    =============GET AL STUDENTS================
-
-    public void getAllStudents() {
-
-        studentDAO.getAllStudents();
-    }
 
 //    ============GET STUDENT BY ID=================
 
@@ -54,7 +44,7 @@ public class StudentService {
 
 //    ==============Average CGPA===================
 
-    public double getAvrCgpa() {
+    public double getAverageCgpa() {
         return studentDAO.getAverageCgpa();
     }
 //    =============HIGHEST CGPA==================
@@ -78,7 +68,7 @@ public class StudentService {
 //    ===================STUDENTS PA semester===============
 
 
-    public void studentpaSemester() {
+    public void studentsPerSemester() {
 
         studentDAO.studentsPerSemester();
     }
@@ -152,11 +142,6 @@ public class StudentService {
         String course = sc.nextLine();
 
         studentDAO.filterByCourse(course);
-    }
-
-    // Constructor
-    public StudentService() {
-
     }
 
     // ================= ADD STUDENT =================
@@ -245,7 +230,7 @@ public ArrayList<Student> searchStudentByCourse(String course)
             String email,
             String phone,
             double cgpa
-    ) throws StudentNotFoundException {
+    ) {
 
         Student updatedStudent = new Student(
                 id,
@@ -273,7 +258,7 @@ public ArrayList<Student> searchStudentByCourse(String course)
 
     // ================= DELETE STUDENT =================
 
-    public boolean deleteStudent(int id) throws StudentNotFoundException {
+    public boolean deleteStudent(int id) {
 
         boolean deleted = studentDAO.deleteStudent(id);
 
@@ -312,7 +297,7 @@ public ArrayList<Student> searchStudentByCourse(String course)
             return false;
         }
 
-        if (!StudentValidator.isValidCgpa((int) student.getCgpa())) {
+        if (!StudentValidator.isValidCgpa(student.getCgpa())) {
             System.out.println("Invalid CGPA!");
             return false;
         }
