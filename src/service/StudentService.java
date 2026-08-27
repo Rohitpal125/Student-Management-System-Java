@@ -1,5 +1,6 @@
 package service;
 
+import java.util.List;
 import java.util.Scanner;
 
 import exception.StudentNotFoundException;
@@ -8,8 +9,10 @@ import util.StudentValidator;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import database.StudentDAO;
+import org.springframework.stereotype.Service;
 
 
+@Service
 public class StudentService {
 
 
@@ -168,6 +171,12 @@ public class StudentService {
     public void displayStudents() {
 
         studentDAO.getAllStudents();
+
+    }
+
+    public List<Student> getAllStudents() {
+
+        return studentDAO.getAllStudentsList();
 
     }
 //    ===============METHOD OVERLOADING===============

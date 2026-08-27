@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>Student Management System</h1>
+
+<p>Manage student records easily.</p>
+
+<button>Add Student</button>
+<h2>Add Student</h2>
+
+<form>
+
+    <label>Name:</label>
+    <input type="text" required>
+
+    <label>Age:</label>
+    <input type="number" min="15" max="35" required>
+
+    <label>Course:</label>
+    <input type="text" required>
+
+    <label>Semester:</label>
+    <input type="number" min="1" max="8" required>
+
+    <label>Email:</label>
+    <input type="email" required>
+
+    <label>Phone:</label>
+    <input type="tel" pattern="[0-9]{10}" required>
+
+    <label>CGPA:</label>
+    <input type="number" min="0" max="10" step="0.1" required>
+
+    <button type="submit" class="save-btn">Save Student</button>
+
+</form>
+
+<h2>Students</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Course</th>
+        <th>Semester</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>CGPA</th>
+    </tr>
+
+
+
+</table>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
