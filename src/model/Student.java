@@ -3,7 +3,7 @@ package model;
 import java.util.Objects;
 
 public class Student {
-    private int id;
+    private Integer id;
     private String name;
     private int age;
     private String course;
@@ -12,11 +12,14 @@ public class Student {
     private String phone;
     private double cgpa;
 
-    public Student(int id, String name, int age, String course, int semester, String email, String phone, double cgpa){
+    public Student() {
+    }
+
+    public Student(Integer id, String name, int age, String course, int semester, String email, String phone, double cgpa){
 
         this.id = id;
-        this. name = name;
-        this. age = age;
+        this.name = name;
+        this.age = age;
         this.course = course;
         this.semester = semester;
         this.email = email;
@@ -24,13 +27,12 @@ public class Student {
         this.cgpa = cgpa;
     }
 
-    public void setId(int id){
+    public void setId(Integer id){
 
         this.id = id;
     }
 
-    public int getId(){
-
+    public Integer getId(){
         return id;
     }
 

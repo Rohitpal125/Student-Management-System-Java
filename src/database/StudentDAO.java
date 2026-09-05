@@ -14,8 +14,8 @@ public class StudentDAO {
     public boolean addStudent(Student student) {
 
         String sql = "INSERT INTO students " +
-                "(id, name, age, email, course_id, semester, phone, cgpa) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                "(name, age, email, course_id, semester, phone, cgpa) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (
                 Connection connection = DBConnection.getConnection();
@@ -24,21 +24,22 @@ public class StudentDAO {
 
             int courseId = getCourseId(connection, student.getCourse());
 
-            ps.setInt(1, student.getId());
-            ps.setString(2, student.getName());
-            ps.setInt(3, student.getAge());
-            ps.setString(4, student.getEmail());
-            ps.setInt(5, courseId);
-            ps.setInt(6, student.getSemester());
-            ps.setString(7, student.getPhone());
-            ps.setDouble(8, student.getCgpa());
+            ps.setString(1, student.getName());
+            ps.setInt(2, student.getAge());
+            ps.setString(3, student.getEmail());
+            ps.setInt(4, courseId);
+            ps.setInt(5, student.getSemester());
+            ps.setString(6, student.getPhone());
+            ps.setDouble(7, student.getCgpa());
 
             int rows = ps.executeUpdate();
 
             return rows > 0;
 
         } catch (SQLException e) {
+
             e.printStackTrace();
+
             return false;
         }
     }
@@ -195,14 +196,20 @@ public class StudentDAO {
                 PreparedStatement ps = connection.prepareStatement(sql)
         ) {
 
+            System.out.println("Deleting student ID: " + id);
+
             ps.setInt(1, id);
 
             int rows = ps.executeUpdate();
 
+            System.out.println("Rows deleted: " + rows);
+
             return rows > 0;
 
         } catch (SQLException e) {
+
             e.printStackTrace();
+
             return false;
         }
     }
