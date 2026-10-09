@@ -1,66 +1,205 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Student Management System</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>Student Management System</h1>
+<header class="topbar">
+    <div class="topbar-inner">
+        <div>
+            <h1>Student records</h1>
+            <p class="subtitle">Add, edit and find students, and keep an eye on CGPA.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="addBtn">Add student</button>
+    </div>
+</header>
 
-<p>Manage student records easily.</p>
+<main class="page">
 
-<button>Add Student</button>
-<h2>Add Student</h2>
+    <!-- Server error banner (shown only when the backend can't be reached) -->
+    <div class="banner" id="errorBanner" role="alert" hidden>
+        <p id="errorBannerText"></p>
+        <button type="button" class="btn btn-ghost" id="retryBtn">Try again</button>
+    </div>
 
+    <!-- Summary -->
+    <section class="stats" aria-label="Summary">
+        <div class="stat">
+            <span class="stat-label">Total students</span>
+            <span class="stat-value" id="statTotal">–</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Average CGPA</span>
+            <span class="stat-value" id="statAvg">–</span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Highest CGPA</span>
+            <span class="stat-value" id="statHigh">–</span>
+            <span class="stat-note" id="statHighName"></span>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Lowest CGPA</span>
+            <span class="stat-value" id="statLow">–</span>
+            <span class="stat-note" id="statLowName"></span>
+        </div>
+    </section>
 
+    <!-- Search, filter, sort -->
+    <section class="toolbar" aria-label="Search and filters">
+        <div class="field grow">
+            <label for="searchInput">Search</label>
+            <input type="search" id="searchInput" placeholder="Name, email, phone or ID">
+        </div>
 
-<form>
+        <div class="field">
+            <label for="courseFilter">Course</label>
+            <select id="courseFilter">
+                <option value="">All courses</option>
+            </select>
+        </div>
 
-    <label>Name:</label>
-    <input type="text" required>
+        <div class="field">
+            <label for="semesterFilter">Semester</label>
+            <select id="semesterFilter">
+                <option value="">All semesters</option>
+                <option>1</option><option>2</option><option>3</option><option>4</option>
+                <option>5</option><option>6</option><option>7</option><option>8</option>
+            </select>
+        </div>
 
-    <label>Age:</label>
-    <input type="number" min="15" max="35" required>
+        <div class="field">
+            <label for="sortSelect">Sort by</label>
+            <select id="sortSelect">
+                <option value="id">ID</option>
+                <option value="name">Name (A to Z)</option>
+                <option value="cgpa-desc">CGPA (high to low)</option>
+                <option value="cgpa-asc">CGPA (low to high)</option>
+                <option value="age">Age</option>
+                <option value="semester">Semester</option>
+            </select>
+        </div>
 
-    <label>Course:</label>
-    <input type="text" required>
+        <button type="button" class="btn btn-ghost" id="clearBtn">Clear filters</button>
+    </section>
 
-    <label>Semester:</label>
-    <input type="number" min="1" max="8" required>
+    <p class="result-count" id="resultCount" aria-live="polite"></p>
 
-    <label>Email:</label>
-    <input type="email" required>
+    <!-- Students table -->
+    <div class="table-wrap">
+        <table id="studentTable">
+            <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Student</th>
+                <th scope="col">Age</th>
+                <th scope="col">Course</th>
+                <th scope="col">Semester</th>
+                <th scope="col">Phone</th>
+                <th scope="col">CGPA</th>
+                <th scope="col"><span class="sr-only">Actions</span></th>
+            </tr>
+            </thead>
+            <tbody id="studentBody"></tbody>
+        </table>
 
-    <label>Phone:</label>
-    <input type="tel" pattern="[0-9]{10}" required>
+        <div class="empty" id="emptyState" hidden>
+            <p class="empty-title" id="emptyTitle"></p>
+            <p id="emptyText"></p>
+            <button type="button" class="btn btn-primary" id="emptyAction" hidden>Add student</button>
+        </div>
+    </div>
 
-    <label>CGPA:</label>
-    <input type="number" min="0" max="10" step="0.1" required>
+</main>
 
-    <button type="submit" class="save-btn">Save Student</button>
+<!-- Add / Edit panel -->
+<dialog id="drawer" class="drawer" aria-labelledby="drawerTitle">
+    <form id="studentForm" novalidate>
+        <div class="drawer-head">
+            <h2 id="drawerTitle">Add student</h2>
+            <button type="button" class="icon-btn" id="closeDrawer" aria-label="Close">&times;</button>
+        </div>
 
-</form>
+        <div class="drawer-body">
+            <div class="field">
+                <label for="fName">Full name</label>
+                <input type="text" id="fName" name="name" autocomplete="off" required>
+                <p class="error" id="err-name"></p>
+            </div>
 
-<h2>Students</h2>
+            <div class="row-2">
+                <div class="field">
+                    <label for="fAge">Age</label>
+                    <input type="number" id="fAge" name="age" inputmode="numeric" required>
+                    <p class="hint">15 to 35</p>
+                    <p class="error" id="err-age"></p>
+                </div>
+                <div class="field">
+                    <label for="fSemester">Semester</label>
+                    <input type="number" id="fSemester" name="semester" inputmode="numeric" required>
+                    <p class="hint">1 to 8</p>
+                    <p class="error" id="err-semester"></p>
+                </div>
+            </div>
 
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Course</th>
-        <th>Semester</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>CGPA</th>
-        <th>Action</th>
-    </tr>
-</table>
+            <div class="field">
+                <label for="fCourse">Course</label>
+                <input type="text" id="fCourse" name="course" list="courseList" autocomplete="off" required>
+                <datalist id="courseList"></datalist>
+                <p class="hint">Pick a course from the list. It must already exist in the courses table.</p>
+                <p class="error" id="err-course"></p>
+            </div>
+
+            <div class="field">
+                <label for="fEmail">Email</label>
+                <input type="email" id="fEmail" name="email" autocomplete="off" required>
+                <p class="error" id="err-email"></p>
+            </div>
+
+            <div class="row-2">
+                <div class="field">
+                    <label for="fPhone">Phone</label>
+                    <input type="tel" id="fPhone" name="phone" inputmode="numeric" maxlength="10" required>
+                    <p class="hint">10 digits</p>
+                    <p class="error" id="err-phone"></p>
+                </div>
+                <div class="field">
+                    <label for="fCgpa">CGPA</label>
+                    <input type="number" id="fCgpa" name="cgpa" step="0.1" inputmode="decimal" required>
+                    <p class="hint">0 to 10</p>
+                    <p class="error" id="err-cgpa"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-foot">
+            <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="saveBtn">Save student</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- Delete confirmation -->
+<dialog id="confirmDialog" class="confirm" aria-labelledby="confirmTitle">
+    <h2 id="confirmTitle">Delete this student?</h2>
+    <p id="confirmText"></p>
+    <div class="confirm-actions">
+        <button type="button" class="btn btn-ghost" id="confirmCancel">Keep student</button>
+        <button type="button" class="btn btn-danger" id="confirmOk">Delete student</button>
+    </div>
+</dialog>
+
+<!-- Toast messages -->
+<div class="toasts" id="toasts" aria-live="polite"></div>
 
 <script src="script.js"></script>
-
 </body>
-
 </html>
