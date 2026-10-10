@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class Main {
+public class ConsoleApp {
 
     public static void main(String[] args) {
 
@@ -382,19 +382,30 @@ public class Main {
                             switch (choice4){
 
                                 case 1:
-                                    service.filterByCgpa();
+                                    System.out.print("Enter Minimum CGPA: ");
+                                    double minimumCgpa = sc.nextDouble();
+                                    sc.nextLine();
+                                    service.filterByCgpa(minimumCgpa);
                                     break;
 
                                 case 2:
-                                    service.filterByAge();
+                                    System.out.print("Enter Minimum Age: ");
+                                    int minimumAge = sc.nextInt();
+                                    sc.nextLine();
+                                    service.filterByAge(minimumAge);
                                     break;
 
                                 case 3:
-                                    service.filterBySemester();
+                                    System.out.print("Enter Minimum Semester: ");
+                                    int minSemester = sc.nextInt();
+                                    sc.nextLine();
+                                    service.filterBySemester(minSemester);
                                     break;
 
                                 case 4:
-                                    service.filterByCourse();
+                                    System.out.print("Enter Course: ");
+                                    String filterCours = sc.nextLine();
+                                    service.filterByCourse(filterCours);
                                     break;
 
                                 case 5:

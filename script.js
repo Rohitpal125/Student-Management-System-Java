@@ -1,14 +1,17 @@
 const API_BASE = "http://localhost:8080";
 const STUDENTS_URL = API_BASE + "/api/students";
 const COURSES_URL = API_BASE + "/api/courses";
+const LOGIN_URL = API_BASE + "/api/login";
 
 
 
-let students = [];          // all students from the server
-let extraCourses = [];      // course names from /api/courses (if it exists)
-let loadFailed = false;     // true when the server could not be reached
-let editingId = null;       // null = adding a new student, number = editing
-let pendingDeleteId = null; // student waiting for delete confirmation
+let students = [];
+let extraCourses = [];
+let loadFailed = false;
+let editingId = null;
+let pendingDeleteId = null;
+let authToken = null;
+let adminName = "";
 
 
 
@@ -16,6 +19,18 @@ const $ = (selector) => document.querySelector(selector);
 
 const els = {
     addBtn: $("#addBtn"),
+    loginBtn: $("#loginBtn"),
+    logoutBtn: $("#logoutBtn"),
+    adminLabel: $("#adminLabel"),
+
+    loginDialog: $("#loginDialog"),
+    loginForm: $("#loginForm"),
+    loginUser: $("#loginUser"),
+    loginPass: $("#loginPass"),
+    loginError: $("#loginError"),
+    loginCancel: $("#loginCancel"),
+    loginSubmit: $("#loginSubmit"),
+
     errorBanner: $("#errorBanner"),
     errorBannerText: $("#errorBannerText"),
     retryBtn: $("#retryBtn"),
@@ -69,7 +84,11 @@ const fields = {
 };
 
 
+// ---------------------------------------------------------
+// 4. Small helper functions
+// ---------------------------------------------------------
 
+// Show a short message at the bottom of the screen
 function showToast(message, isError = false) {
     const toast = document.createElement("div");
     toast.className = "toast" + (isError ? " error" : "");
@@ -93,6 +112,66 @@ function isSuccess(text) {
     return /successfully/i.test(text);
 }
 
+// ---------- Admin login helpers ----------
+
+function isAdmin() {
+    return authToken !== null;
+}
+
+// Headers for requests that change data (add, update, delete)
+function authHeaders(extraHeaders) {
+    return Object.assign({}, extraHeaders, { Authorization: "Bearer " + authToken });
+}
+
+// The login is kept only while this browser tab is open
+function saveSession(token, name) {
+    authToken = token;
+    adminName = name;
+    try {
+        sessionStorage.setItem("sms_token", token);
+        sessionStorage.setItem("sms_admin", name);
+    } catch (error) { /* storage not available - fine */ }
+}
+
+function clearSession() {
+    authToken = null;
+    adminName = "";
+    try {
+        sessionStorage.removeItem("sms_token");
+        sessionStorage.removeItem("sms_admin");
+    } catch (error) { /* storage not available - fine */ }
+}
+
+function restoreSession() {
+    try {
+        const token = sessionStorage.getItem("sms_token");
+        if (token) {
+            authToken = token;
+            adminName = sessionStorage.getItem("sms_admin") || "admin";
+        }
+    } catch (error) { /* storage not available - fine */ }
+}
+
+// Show or hide the admin-only buttons
+function updateAuthUI() {
+    const admin = isAdmin();
+
+    document.body.classList.toggle("is-admin", admin);
+    els.addBtn.hidden = !admin;
+    els.logoutBtn.hidden = !admin;
+    els.loginBtn.hidden = admin;
+    els.adminLabel.hidden = !admin;
+    els.adminLabel.textContent = admin ? "Signed in as " + adminName : "";
+}
+
+// Called when the server says "401 - login required"
+function handleSessionExpired() {
+    clearSession();
+    updateAuthUI();
+    render();
+    showToast("Your admin session ended. Please log in again.", true);
+}
+
 // CGPA bar colour: green (7.5+), teal (5 to 7.5), red (below 5)
 function cgpaLevel(cgpa) {
     if (cgpa >= 7.5) return "good";
@@ -101,6 +180,9 @@ function cgpaLevel(cgpa) {
 }
 
 
+// ---------------------------------------------------------
+// 5. Load data from the server
+// ---------------------------------------------------------
 
 async function loadStudents() {
     try {
@@ -214,6 +296,9 @@ function getVisibleStudents() {
 }
 
 
+// ---------------------------------------------------------
+// 7. Draw the page
+// ---------------------------------------------------------
 
 function render() {
     renderStats();
@@ -254,7 +339,7 @@ function renderTable() {
 
     els.tbody.replaceChildren();
 
-
+    // Result count above the table
     if (loadFailed) {
         els.resultCount.textContent = "";
     } else if (rows.length === students.length) {
@@ -263,6 +348,7 @@ function renderTable() {
         els.resultCount.textContent = "Showing " + rows.length + " of " + students.length + " students";
     }
 
+    // Empty states
     if (rows.length === 0) {
         els.table.hidden = true;
         els.emptyState.hidden = false;
@@ -273,8 +359,10 @@ function renderTable() {
             els.emptyText.textContent = "Students will appear here once the server connection works.";
         } else if (students.length === 0) {
             els.emptyTitle.textContent = "No students yet";
-            els.emptyText.textContent = "Add the first student to start your list.";
-            els.emptyAction.hidden = false;
+            els.emptyText.textContent = isAdmin()
+                ? "Add the first student to start your list."
+                : "No students have been added yet.";
+            els.emptyAction.hidden = !isAdmin();
         } else {
             els.emptyTitle.textContent = "No students match";
             els.emptyText.textContent = "Try a different search, or clear the filters.";
@@ -288,6 +376,7 @@ function renderTable() {
     rows.forEach((student) => els.tbody.appendChild(buildRow(student)));
 }
 
+// Make one <td>. "label" is used by the mobile card layout.
 function makeCell(label, className) {
     const td = document.createElement("td");
     td.dataset.label = label;
@@ -367,12 +456,20 @@ function buildRow(student) {
     actions.append(editBtn, deleteBtn);
     actionCell.appendChild(actions);
 
-    tr.append(idCell, studentCell, ageCell, courseCell, semesterCell, phoneCell, cgpaCell, actionCell);
+    tr.append(idCell, studentCell, ageCell, courseCell, semesterCell, phoneCell, cgpaCell);
+
+    // Edit / Delete buttons are only for admins
+    if (isAdmin()) {
+        tr.append(actionCell);
+    }
+
     return tr;
 }
 
 
-
+// ---------------------------------------------------------
+// 8. Add / Edit panel
+// ---------------------------------------------------------
 
 function clearFormErrors() {
     Object.keys(fields).forEach((key) => {
@@ -383,6 +480,8 @@ function clearFormErrors() {
 }
 
 function openDrawer(student) {
+    if (!isAdmin()) return;
+
     clearFormErrors();
     els.form.reset();
 
@@ -486,9 +585,16 @@ async function saveStudent(event) {
     try {
         const response = await fetch(url, {
             method: isEditing ? "PUT" : "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify(student)
         });
+
+        if (response.status === 401) {
+            closeDrawer();
+            handleSessionExpired();
+            els.saveBtn.disabled = false;
+            return;
+        }
 
         const text = await response.text();
 
@@ -532,7 +638,17 @@ async function deleteStudent() {
     if (id === null) return;
 
     try {
-        const response = await fetch(STUDENTS_URL + "/" + id, { method: "DELETE" });
+        const response = await fetch(STUDENTS_URL + "/" + id, {
+            method: "DELETE",
+            headers: authHeaders()
+        });
+
+        if (response.status === 401) {
+            pendingDeleteId = null;
+            handleSessionExpired();
+            return;
+        }
+
         const text = await response.text();
 
         if (response.ok && isSuccess(text)) {
@@ -552,8 +668,85 @@ async function deleteStudent() {
 }
 
 
+// ---------------------------------------------------------
+// 9b. Admin login / logout
+// ---------------------------------------------------------
+
+function openLogin() {
+    els.loginError.textContent = "";
+    els.loginPass.value = "";
+    els.loginDialog.showModal();
+    els.loginUser.focus();
+}
+
+async function login(event) {
+    event.preventDefault();
+
+    const username = els.loginUser.value.trim();
+    const password = els.loginPass.value;
+
+    els.loginError.textContent = "";
+
+    if (!username || !password) {
+        els.loginError.textContent = "Enter your username and password.";
+        return;
+    }
+
+    els.loginSubmit.disabled = true;
+    els.loginSubmit.textContent = "Logging in...";
+
+    try {
+        const response = await fetch(LOGIN_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: username, password: password })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            saveSession(data.token, data.username);
+            els.loginDialog.close();
+            els.loginForm.reset();
+            updateAuthUI();
+            render();
+            showToast("Logged in as " + data.username + ".");
+
+        } else if (response.status === 401) {
+            els.loginError.textContent = "Wrong username or password.";
+            els.loginPass.value = "";
+            els.loginPass.focus();
+
+        } else {
+            els.loginError.textContent = "Login failed (server error " + response.status + ").";
+        }
+
+    } catch (error) {
+        console.error("Login error:", error);
+        els.loginError.textContent = "Could not reach the server. Is the Spring Boot app running?";
+    }
+
+    els.loginSubmit.disabled = false;
+    els.loginSubmit.textContent = "Log in";
+}
+
+function logout() {
+    clearSession();
+    updateAuthUI();
+    render();
+    showToast("Logged out.");
+}
+
+
+// ---------------------------------------------------------
+// 10. Connect buttons and inputs to the functions above
+// ---------------------------------------------------------
 
 els.addBtn.addEventListener("click", () => openDrawer(null));
+els.loginBtn.addEventListener("click", openLogin);
+els.logoutBtn.addEventListener("click", logout);
+els.loginForm.addEventListener("submit", login);
+els.loginCancel.addEventListener("click", () => els.loginDialog.close());
 els.emptyAction.addEventListener("click", () => openDrawer(null));
 els.retryBtn.addEventListener("click", () => {
     loadStudents();
@@ -602,6 +795,11 @@ els.confirmCancel.addEventListener("click", () => {
 });
 
 
+// ---------------------------------------------------------
+// 11. Start
+// ---------------------------------------------------------
 
+restoreSession();
+updateAuthUI();
 loadStudents();
 loadCourses();

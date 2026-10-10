@@ -1,7 +1,7 @@
 package service;
 
 import java.util.List;
-import java.util.Scanner;
+
 
 import exception.StudentNotFoundException;
 import model.Student;
@@ -21,7 +21,7 @@ public class StudentService {
 
     private static final Logger logger = Logger.getLogger(StudentService.class.getName());
 
-    Scanner sc = new Scanner(System.in);
+
 
 //    =============GET TOTAL STUDENTS==============
 
@@ -106,43 +106,28 @@ public class StudentService {
 
 //    ================FILTER BY CGPA================
 
-    public void filterByCgpa() {
-
-        System.out.print("Enter Minimum CGPA: ");
-        double minimumCgpa = sc.nextDouble();
-        sc.nextLine();
+    public void filterByCgpa(double minimumCgpa) {
 
         studentDAO.filterByCgpa(minimumCgpa);
     }
 
 //    =================FILTER BY AGE===================
 
-    public void filterByAge() {
-
-        System.out.print("Enter Minimum Age: ");
-        int minimumAge = sc.nextInt();
-        sc.nextLine();
+    public void filterByAge(int minimumAge) {
 
         studentDAO.filterByAge(minimumAge);
     }
 
 //    ================FILTER BY SEMESTER=============
 
-    public void filterBySemester() {
-
-        System.out.print("Enter Minimum Semester: ");
-        int minSemester = sc.nextInt();
-        sc.nextLine();
+    public void filterBySemester(int minSemester) {
 
         studentDAO.filterBySemester(minSemester);
     }
 
 //    ===============FILTER BY COURSE=========
 
-    public void filterByCourse() {
-
-        System.out.print("Enter Course: ");
-        String course = sc.nextLine();
+    public void filterByCourse(String course) {
 
         studentDAO.filterByCourse(course);
     }

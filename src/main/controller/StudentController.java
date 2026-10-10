@@ -6,7 +6,6 @@ import service.StudentService;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:63342")
 @RestController
 public class StudentController {
 

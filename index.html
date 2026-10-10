@@ -19,7 +19,12 @@
             <h1>Student records</h1>
             <p class="subtitle">Add, edit and find students, and keep an eye on CGPA.</p>
         </div>
-        <button type="button" class="btn btn-primary" id="addBtn">Add student</button>
+        <div class="topbar-actions">
+            <span class="admin-label" id="adminLabel" hidden></span>
+            <button type="button" class="btn btn-ghost" id="loginBtn">Admin login</button>
+            <button type="button" class="btn btn-primary" id="addBtn" hidden>Add student</button>
+            <button type="button" class="btn btn-ghost" id="logoutBtn" hidden>Log out</button>
+        </div>
     </div>
 </header>
 
@@ -105,7 +110,7 @@
                 <th scope="col">Semester</th>
                 <th scope="col">Phone</th>
                 <th scope="col">CGPA</th>
-                <th scope="col"><span class="sr-only">Actions</span></th>
+                <th scope="col" class="col-actions"><span class="sr-only">Actions</span></th>
             </tr>
             </thead>
             <tbody id="studentBody"></tbody>
@@ -195,6 +200,31 @@
         <button type="button" class="btn btn-ghost" id="confirmCancel">Keep student</button>
         <button type="button" class="btn btn-danger" id="confirmOk">Delete student</button>
     </div>
+</dialog>
+
+<!-- Admin login -->
+<dialog id="loginDialog" class="confirm" aria-labelledby="loginTitle">
+    <form id="loginForm" novalidate>
+        <h2 id="loginTitle">Admin login</h2>
+        <p class="login-note">Anyone can view students. Only admins can add, edit or delete.</p>
+
+        <div class="field">
+            <label for="loginUser">Username</label>
+            <input type="text" id="loginUser" autocomplete="username" required>
+        </div>
+
+        <div class="field">
+            <label for="loginPass">Password</label>
+            <input type="password" id="loginPass" autocomplete="current-password" required>
+        </div>
+
+        <p class="error" id="loginError" role="alert"></p>
+
+        <div class="confirm-actions">
+            <button type="button" class="btn btn-ghost" id="loginCancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="loginSubmit">Log in</button>
+        </div>
+    </form>
 </dialog>
 
 <!-- Toast messages -->
