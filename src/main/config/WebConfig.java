@@ -8,8 +8,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    // Websites that are allowed to call this backend.
-    // Change with the ALLOWED_ORIGINS environment variable (comma separated).
     private static final String DEFAULT_ORIGINS =
             "http://localhost:63342,http://localhost:5500,http://127.0.0.1:5500,"
                     + "https://rohitpal125.github.io";
@@ -31,6 +29,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new AuthInterceptor())
-                .addPathPatterns("/api/students", "/api/students/**");
+                .addPathPatterns("/api/students", "/api/students/**", "/api/change-password");
     }
 }

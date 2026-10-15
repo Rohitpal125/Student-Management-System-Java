@@ -15,6 +15,36 @@ public class AuthService {
         return adminDAO.saveAdmin(username, PasswordUtil.hash(password));
     }
 
+    public boolean adminExists(String username) {
+        return adminDAO.getPasswordHash(username) != null;
+    }
+
+    // Returns null if the password was changed, otherwise a message explaining what is wrong
+    public String changePassword(String username, String oldPassword, String newPassword) {
+
+        if (oldPassword == null || newPassword == null) {
+            return "Enter your current and new password.";
+        }
+
+        if (newPassword.length() < 8 || newPassword.length() > 128) {
+            return "New password must be 8 to 128 characters long.";
+        }
+
+        String storedHash = adminDAO.getPasswordHash(username);
+
+        if (storedHash == null || !PasswordUtil.verify(oldPassword, storedHash)) {
+            return "Current password is wrong.";
+        }
+
+        if (oldPassword.equals(newPassword)) {
+            return "New password must be different from the current one.";
+        }
+
+        boolean saved = adminDAO.saveAdmin(username, PasswordUtil.hash(newPassword));
+
+        return saved ? null : "Could not save the new password. Please try again.";
+    }
+
     // Returns a token if the login is correct, otherwise null
     public String login(String username, String password) {
 

@@ -5,8 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import util.TokenUtil;
 
-// Runs before every /api/students request.
-// Reading (GET) is open to everyone. Changing data needs an admin token.
+
 public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
@@ -26,6 +25,8 @@ public class AuthInterceptor implements HandlerInterceptor {
             String username = TokenUtil.verify(header.substring(7));
 
             if (username != null) {
+                // Remember who is calling, so controllers can use it
+                request.setAttribute("adminUsername", username);
                 return true;
             }
         }

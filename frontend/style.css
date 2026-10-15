@@ -510,7 +510,8 @@ dialog::backdrop {
     color: var(--muted);
 }
 
-#loginForm {
+#loginForm,
+#passwordForm {
     display: flex;
     flex-direction: column;
     gap: 14px;

@@ -2,18 +2,25 @@ const API_BASE = "http://localhost:8080";
 const STUDENTS_URL = API_BASE + "/api/students";
 const COURSES_URL = API_BASE + "/api/courses";
 const LOGIN_URL = API_BASE + "/api/login";
+const CHANGE_PASSWORD_URL = API_BASE + "/api/change-password";
 
 
+// ---------------------------------------------------------
+// 2. State (data we keep in memory while the page is open)
+// ---------------------------------------------------------
 
-let students = [];
-let extraCourses = [];
-let loadFailed = false;
-let editingId = null;
-let pendingDeleteId = null;
-let authToken = null;
-let adminName = "";
+let students = [];          // all students from the server
+let extraCourses = [];      // course names from /api/courses (if it exists)
+let loadFailed = false;     // true when the server could not be reached
+let editingId = null;       // null = adding a new student, number = editing
+let pendingDeleteId = null; // student waiting for delete confirmation
+let authToken = null;       // set after admin login (null = normal visitor)
+let adminName = "";         // name of the logged-in admin
 
 
+// ---------------------------------------------------------
+// 3. HTML elements
+// ---------------------------------------------------------
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -21,7 +28,17 @@ const els = {
     addBtn: $("#addBtn"),
     loginBtn: $("#loginBtn"),
     logoutBtn: $("#logoutBtn"),
+    passwordBtn: $("#passwordBtn"),
     adminLabel: $("#adminLabel"),
+
+    passwordDialog: $("#passwordDialog"),
+    passwordForm: $("#passwordForm"),
+    oldPass: $("#oldPass"),
+    newPass: $("#newPass"),
+    confirmPass: $("#confirmPass"),
+    passwordError: $("#passwordError"),
+    passwordCancel: $("#passwordCancel"),
+    passwordSubmit: $("#passwordSubmit"),
 
     loginDialog: $("#loginDialog"),
     loginForm: $("#loginForm"),
@@ -159,6 +176,7 @@ function updateAuthUI() {
     document.body.classList.toggle("is-admin", admin);
     els.addBtn.hidden = !admin;
     els.logoutBtn.hidden = !admin;
+    els.passwordBtn.hidden = !admin;
     els.loginBtn.hidden = admin;
     els.adminLabel.hidden = !admin;
     els.adminLabel.textContent = admin ? "Signed in as " + adminName : "";
@@ -301,12 +319,12 @@ function getVisibleStudents() {
 // ---------------------------------------------------------
 
 function render() {
-    renderStats();
-    renderTable();
+    renderTable();   // renderTable also updates the summary numbers
 }
 
-function renderStats() {
-    if (students.length === 0) {
+// Summary numbers for the students currently shown (after course / semester / search filters)
+function renderStats(list) {
+    if (list.length === 0) {
         els.statTotal.textContent = loadFailed ? "–" : "0";
         els.statAvg.textContent = "–";
         els.statHigh.textContent = "–";
@@ -317,17 +335,17 @@ function renderStats() {
     }
 
     let total = 0;
-    let highest = students[0];
-    let lowest = students[0];
+    let highest = list[0];
+    let lowest = list[0];
 
-    students.forEach((s) => {
+    list.forEach((s) => {
         total += Number(s.cgpa) || 0;
         if (s.cgpa > highest.cgpa) highest = s;
         if (s.cgpa < lowest.cgpa) lowest = s;
     });
 
-    els.statTotal.textContent = students.length;
-    els.statAvg.textContent = (total / students.length).toFixed(2);
+    els.statTotal.textContent = list.length;
+    els.statAvg.textContent = (total / list.length).toFixed(2);
     els.statHigh.textContent = Number(highest.cgpa).toFixed(1);
     els.statHighName.textContent = highest.name;
     els.statLow.textContent = Number(lowest.cgpa).toFixed(1);
@@ -336,6 +354,8 @@ function renderStats() {
 
 function renderTable() {
     const rows = getVisibleStudents();
+
+    renderStats(rows);
 
     els.tbody.replaceChildren();
 
@@ -730,6 +750,86 @@ async function login(event) {
     els.loginSubmit.textContent = "Log in";
 }
 
+function openPasswordDialog() {
+    if (!isAdmin()) return;
+
+    els.passwordForm.reset();
+    els.passwordError.textContent = "";
+    els.passwordDialog.showModal();
+    els.oldPass.focus();
+}
+
+async function changePassword(event) {
+    event.preventDefault();
+
+    const oldPassword = els.oldPass.value;
+    const newPassword = els.newPass.value;
+    const confirmPassword = els.confirmPass.value;
+
+    els.passwordError.textContent = "";
+
+    // Check on the page first, so simple mistakes need no server call
+    if (!oldPassword || !newPassword || !confirmPassword) {
+        els.passwordError.textContent = "Fill in all three fields.";
+        return;
+    }
+    if (newPassword.length < 8) {
+        els.passwordError.textContent = "New password must be at least 8 characters.";
+        els.newPass.focus();
+        return;
+    }
+    if (newPassword !== confirmPassword) {
+        els.passwordError.textContent = "The new passwords do not match.";
+        els.confirmPass.focus();
+        return;
+    }
+    if (newPassword === oldPassword) {
+        els.passwordError.textContent = "New password must be different from the current one.";
+        els.newPass.focus();
+        return;
+    }
+
+    els.passwordSubmit.disabled = true;
+    els.passwordSubmit.textContent = "Saving...";
+
+    try {
+        const response = await fetch(CHANGE_PASSWORD_URL, {
+            method: "POST",
+            headers: authHeaders({ "Content-Type": "application/json" }),
+            body: JSON.stringify({ oldPassword: oldPassword, newPassword: newPassword })
+        });
+
+        if (response.status === 401) {
+            // Login token is no longer valid
+            els.passwordDialog.close();
+            handleSessionExpired();
+
+        } else if (response.ok) {
+            els.passwordDialog.close();
+            els.passwordForm.reset();
+            showToast("Password changed.");
+
+        } else {
+            // 400 = for example "Current password is wrong."
+            let message = "Could not change the password (server error " + response.status + ").";
+            try {
+                const data = await response.json();
+                if (data.message) message = data.message;
+            } catch (parseError) { /* keep the default message */ }
+
+            els.passwordError.textContent = message;
+            els.oldPass.focus();
+        }
+
+    } catch (error) {
+        console.error("Change password error:", error);
+        els.passwordError.textContent = "Could not reach the server. Is the Spring Boot app running?";
+    }
+
+    els.passwordSubmit.disabled = false;
+    els.passwordSubmit.textContent = "Change password";
+}
+
 function logout() {
     clearSession();
     updateAuthUI();
@@ -745,6 +845,9 @@ function logout() {
 els.addBtn.addEventListener("click", () => openDrawer(null));
 els.loginBtn.addEventListener("click", openLogin);
 els.logoutBtn.addEventListener("click", logout);
+els.passwordBtn.addEventListener("click", openPasswordDialog);
+els.passwordForm.addEventListener("submit", changePassword);
+els.passwordCancel.addEventListener("click", () => els.passwordDialog.close());
 els.loginForm.addEventListener("submit", login);
 els.loginCancel.addEventListener("click", () => els.loginDialog.close());
 els.emptyAction.addEventListener("click", () => openDrawer(null));

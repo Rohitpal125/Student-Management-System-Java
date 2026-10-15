@@ -23,6 +23,7 @@
             <span class="admin-label" id="adminLabel" hidden></span>
             <button type="button" class="btn btn-ghost" id="loginBtn">Admin login</button>
             <button type="button" class="btn btn-primary" id="addBtn" hidden>Add student</button>
+            <button type="button" class="btn btn-ghost" id="passwordBtn" hidden>Change password</button>
             <button type="button" class="btn btn-ghost" id="logoutBtn" hidden>Log out</button>
         </div>
     </div>
@@ -223,6 +224,36 @@
         <div class="confirm-actions">
             <button type="button" class="btn btn-ghost" id="loginCancel">Cancel</button>
             <button type="submit" class="btn btn-primary" id="loginSubmit">Log in</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- Change password -->
+<dialog id="passwordDialog" class="confirm" aria-labelledby="passwordTitle">
+    <form id="passwordForm" novalidate>
+        <h2 id="passwordTitle">Change password</h2>
+
+        <div class="field">
+            <label for="oldPass">Current password</label>
+            <input type="password" id="oldPass" autocomplete="current-password" required>
+        </div>
+
+        <div class="field">
+            <label for="newPass">New password</label>
+            <input type="password" id="newPass" autocomplete="new-password" required>
+            <p class="hint">At least 8 characters.</p>
+        </div>
+
+        <div class="field">
+            <label for="confirmPass">Confirm new password</label>
+            <input type="password" id="confirmPass" autocomplete="new-password" required>
+        </div>
+
+        <p class="error" id="passwordError" role="alert"></p>
+
+        <div class="confirm-actions">
+            <button type="button" class="btn btn-ghost" id="passwordCancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="passwordSubmit">Change password</button>
         </div>
     </form>
 </dialog>

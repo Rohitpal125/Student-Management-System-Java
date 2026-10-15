@@ -4,7 +4,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import service.AuthService;
 
-// Runs once when the app starts. Creates the admin from environment variables.
 @Component
 public class AdminBootstrap implements CommandLineRunner {
 
@@ -30,10 +29,18 @@ public class AdminBootstrap implements CommandLineRunner {
             return;
         }
 
-        boolean ok = authService.createOrUpdateAdmin(username.trim(), password);
+        String name = username.trim();
+        boolean reset = "true".equalsIgnoreCase(System.getenv("RESET_ADMIN_PASSWORD"));
+
+        if (authService.adminExists(name) && !reset) {
+            System.out.println("Admin already exists: " + name + " (password not changed)");
+            return;
+        }
+
+        boolean ok = authService.createOrUpdateAdmin(name, password);
 
         System.out.println(ok
-                ? "Admin account ready: " + username.trim()
+                ? "Admin account ready: " + name
                 : "Could not create the admin account. Check the database connection.");
     }
 }
