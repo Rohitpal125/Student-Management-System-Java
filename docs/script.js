@@ -1,4 +1,6 @@
-const API_BASE = "http://localhost:8080";
+const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+    ? "http://localhost:8080"
+    : "https://student-management-api-e13m.onrender.com";
 const STUDENTS_URL = API_BASE + "/api/students";
 const COURSES_URL = API_BASE + "/api/courses";
 const LOGIN_URL = API_BASE + "/api/login";
