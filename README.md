@@ -11,6 +11,11 @@ https://rohitpal125.github.io/Student-Management-System-Java/
 
 The backend runs on a free server, so the first load after a break can take up to a minute.
 
+## Screenshots
+
+![Home](screenshots/01-home.png)
+![Admin panel](screenshots/03-admin.png)
+
 ## Features
 
 ### Web app
