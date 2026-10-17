@@ -4,7 +4,12 @@ A full-stack student record manager built with **Java, Spring Boot and MySQL**. 
 
 ## Live Demo
 
-_Add the link here after deployment._
+https://rohitpal125.github.io/Student-Management-System-Java/
+
+- **Frontend:** https://rohitpal125.github.io/Student-Management-System-Java/
+- **Backend API:** https://student-management-api-e13m.onrender.com/api/students
+
+The backend runs on a free server, so the first load after a break can take up to a minute.
 
 ## Features
 
@@ -57,7 +62,7 @@ DBConnection  ->  MySQL
 StudentManagementSystem/
 ├── pom.xml
 ├── Dockerfile
-├── frontend/
+├── docs/
 │   ├── index.html
 │   ├── style.css
 │   └── script.js
@@ -178,7 +183,7 @@ java -jar target/StudentManagementSystem-1.0-SNAPSHOT.jar
 
 ### 5. Open the frontend
 
-Open `frontend/index.html` from IntelliJ (right-click > Open in > Browser). Opening it from IntelliJ matters because the backend allows that origin by default.
+Open `docs/index.html` from IntelliJ (right-click > Open in > Browser). Opening it from IntelliJ matters because the backend allows that origin by default.
 
 ### 6. Console version (optional)
 
