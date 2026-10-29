@@ -5,6 +5,7 @@ const STUDENTS_URL = API_BASE + "/api/students";
 const COURSES_URL = API_BASE + "/api/courses";
 const LOGIN_URL = API_BASE + "/api/login";
 const CHANGE_PASSWORD_URL = API_BASE + "/api/change-password";
+const AI_INSIGHTS_URL = API_BASE + "/api/ai/insights";
 
 
 // ---------------------------------------------------------
@@ -31,6 +32,12 @@ const els = {
     loginBtn: $("#loginBtn"),
     logoutBtn: $("#logoutBtn"),
     passwordBtn: $("#passwordBtn"),
+    insightsBtn: $("#insightsBtn"),
+
+    insightsDialog: $("#insightsDialog"),
+    insightsText: $("#insightsText"),
+    insightsClose: $("#insightsClose"),
+    insightsRefresh: $("#insightsRefresh"),
     adminLabel: $("#adminLabel"),
 
     passwordDialog: $("#passwordDialog"),
@@ -179,6 +186,7 @@ function updateAuthUI() {
     els.addBtn.hidden = !admin;
     els.logoutBtn.hidden = !admin;
     els.passwordBtn.hidden = !admin;
+    els.insightsBtn.hidden = !admin;
     els.loginBtn.hidden = admin;
     els.adminLabel.hidden = !admin;
     els.adminLabel.textContent = admin ? "Signed in as " + adminName : "";
@@ -832,6 +840,56 @@ async function changePassword(event) {
     els.passwordSubmit.textContent = "Change password";
 }
 
+// ---------------------------------------------------------
+// 9c. AI insights (admin only)
+// ---------------------------------------------------------
+
+function openInsights() {
+    if (!isAdmin()) return;
+
+    els.insightsDialog.showModal();
+    loadInsights();
+}
+
+async function loadInsights() {
+    els.insightsText.textContent =
+        "Asking the AI... this can take up to a minute (the free server may be waking up).";
+    els.insightsRefresh.disabled = true;
+
+    try {
+        const response = await fetch(AI_INSIGHTS_URL, {
+            method: "POST",
+            headers: authHeaders()
+        });
+
+        if (response.status === 401) {
+            els.insightsRefresh.disabled = false;
+            els.insightsDialog.close();
+            handleSessionExpired();
+            return;
+        }
+
+        let data = {};
+        try {
+            data = await response.json();
+        } catch (parseError) { /* the reply was not JSON */ }
+
+        if (response.ok && data.insight) {
+            // textContent (not innerHTML), so the AI's text can never run as code
+            els.insightsText.textContent = data.insight;
+        } else {
+            els.insightsText.textContent = data.message ||
+                "The AI could not answer right now (server error " + response.status + ").";
+        }
+
+    } catch (error) {
+        console.error("AI insights error:", error);
+        els.insightsText.textContent = "Could not reach the server. Is the Spring Boot app running?";
+    }
+
+    els.insightsRefresh.disabled = false;
+}
+
 function logout() {
     clearSession();
     updateAuthUI();
@@ -848,6 +906,9 @@ els.addBtn.addEventListener("click", () => openDrawer(null));
 els.loginBtn.addEventListener("click", openLogin);
 els.logoutBtn.addEventListener("click", logout);
 els.passwordBtn.addEventListener("click", openPasswordDialog);
+els.insightsBtn.addEventListener("click", openInsights);
+els.insightsRefresh.addEventListener("click", loadInsights);
+els.insightsClose.addEventListener("click", () => els.insightsDialog.close());
 els.passwordForm.addEventListener("submit", changePassword);
 els.passwordCancel.addEventListener("click", () => els.passwordDialog.close());
 els.loginForm.addEventListener("submit", login);
