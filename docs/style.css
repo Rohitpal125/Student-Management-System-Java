@@ -668,3 +668,20 @@ dialog::backdrop {
 [hidden] {
     display: none !important;
 }
+
+/* AI insights */
+#insightsDialog {
+    width: min(560px, calc(100% - 32px));
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.confirm .insights-text {
+    color: var(--ink);
+    white-space: pre-wrap;
+    margin: 14px 0 12px;
+}
+
+.confirm .hint {
+    margin-top: 4px;
+}

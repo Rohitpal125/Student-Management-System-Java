@@ -29,6 +29,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new AuthInterceptor())
-                .addPathPatterns("/api/students", "/api/students/**", "/api/change-password");
+                .addPathPatterns("/api/students", "/api/students/**", "/api/change-password", "/api/ai/**");
     }
 }

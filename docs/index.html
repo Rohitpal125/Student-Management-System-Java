@@ -23,6 +23,7 @@
             <span class="admin-label" id="adminLabel" hidden></span>
             <button type="button" class="btn btn-ghost" id="loginBtn">Admin login</button>
             <button type="button" class="btn btn-primary" id="addBtn" hidden>Add student</button>
+            <button type="button" class="btn btn-ghost" id="insightsBtn" hidden>AI insights</button>
             <button type="button" class="btn btn-ghost" id="passwordBtn" hidden>Change password</button>
             <button type="button" class="btn btn-ghost" id="logoutBtn" hidden>Log out</button>
         </div>
@@ -256,6 +257,17 @@
             <button type="submit" class="btn btn-primary" id="passwordSubmit">Change password</button>
         </div>
     </form>
+</dialog>
+
+<!-- AI insights -->
+<dialog id="insightsDialog" class="confirm" aria-labelledby="insightsTitle">
+    <h2 id="insightsTitle">AI insights</h2>
+    <p class="insights-text" id="insightsText" aria-live="polite"></p>
+    <p class="hint">The AI sees only counts and averages, never names, emails or phone numbers. Check important numbers yourself.</p>
+    <div class="confirm-actions">
+        <button type="button" class="btn btn-ghost" id="insightsClose">Close</button>
+        <button type="button" class="btn btn-primary" id="insightsRefresh">Ask again</button>
+    </div>
 </dialog>
 
 <!-- Toast messages -->
